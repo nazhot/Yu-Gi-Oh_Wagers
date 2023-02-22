@@ -1,3 +1,4 @@
 #wagering-page {
-    
+    display: grid;
+    grid-template-areas: 'deck';
 }

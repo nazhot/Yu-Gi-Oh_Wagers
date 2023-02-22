@@ -8,22 +8,22 @@
     <link rel="stylesheet" href="/wagering-page.css" />
   </head>
   <body>
-    <div id="home-page">
+    <div id="home-page" style="display: none">
       <label for="token-count" class="player-1-element" style="display: none">Tokens</label>
       <input type="number" name="token-count" id="token-count" class="player-1-element" style="display: none">
       <button type="button" id="start-game" class="player-1-element" style="display: none">Start Game</button>
       <p id="opponent-connected" style="display: none">Opponent Connected!</p>
     </div>
-    <div id="wagering-page" style="display: none">
+    <div id="wagering-page">
       <div id="deck-container">
         <div id="deck">
 
         </div>
       </div>
       <div id="shown-card-container">
-
+        <img id="shown-card" src="public/images/back.png">
       </div>
-      <div id="bottom-nav-container" style="display: none">
+      <div id="bottom-nav-container">
         <div id="player-information-container">
           <p class="player-token-count"> </p>
           <p class="player-deck-size"> </p>
