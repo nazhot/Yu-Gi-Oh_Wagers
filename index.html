@@ -52,5 +52,11 @@
         </div>
       </div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket             = io();
+
+      socket.emit("place-wager", 200);
+    </script>
   </body>
 </html>
