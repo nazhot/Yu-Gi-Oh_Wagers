@@ -14,7 +14,7 @@
       <button type="button" id="start-game" class="player-1-element" style="display: none">Start Game</button>
       <p id="opponent-connected" style="display: none">Opponent Connected!</p>
     </div>
-    <div id="wagering-page" style="display:none">
+    <div id="wagering-page">
       <div id="wagering-deck-container" class="deck-container">
         <div id="wagering-deck" class="deck">
 
@@ -31,12 +31,12 @@
         <div id="player-wager-options-container">
           <label for="player-wager-amount">Wager:</label>
           <input type="number" name="player-wager-amount" id="player-wager-amount">
-          <button id="submit-wager">Submit Wager</button>
+          <button id="submit-wager" onclick="submitWager()">Submit Wager</button>
         </div>
       </div>
     </div>
 
-    <div id="liquidating-page">
+    <div id="liquidating-page" style="display: none">
       <div id="liquidating-deck-container" class="deck-container">
         <div id="liquidating-deck" class="deck">
 
@@ -56,7 +56,14 @@
     <script>
       let socket             = io();
 
-      socket.emit("place-wager", 200);
+
+      function submitWager(){
+        const wagerElement = document.getElementById("player-wager-amount");
+        const wager        = wagerElement.value;
+        socket.emit("place-wager", wager);
+      }
+
+
     </script>
   </body>
 </html>
