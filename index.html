@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/wagering-page.css" />
   </head>
   <body>
-    <div id="home-page" style="display: none">
+    <div id="home-page">
       <label for="token-count" class="player-1-element" style="display: none">Tokens</label>
       <input type="number" name="token-count" id="token-count" class="player-1-element" style="display: none">
       <button type="button" id="start-game" class="player-1-element" style="display: none">Start Game</button>
@@ -20,7 +20,7 @@
 
         </div>
       </div>
-      <div id="shown-card-container">
+      <div id="shown-card-container" style="display: none">
         <img id="shown-card" src="public/images/back.png">
       </div>
       <div class="bottom-nav-container">
@@ -63,6 +63,37 @@
         socket.emit("place-wager", wager);
       }
 
+      socket.on("non-number-wager", () => {
+
+      });
+
+      socket.on("insufficient-tokens", () => {
+
+      });
+
+      socket.on("self-wager-placed", (tokensRemaining) => {
+
+      });
+
+      socket.on("wager-placed", (playerThatPlacedWager) => {
+
+      });
+
+      socket.on("invalid-liquidation", () => {
+
+      });
+
+      socket.on("change-to-wager-screen", () => {
+
+      });
+
+      socket.on("change-to-liquidate-screen", () => {
+
+      });
+
+      socket.on("card-added", (card) => {
+
+      });
 
     </script>
   </body>

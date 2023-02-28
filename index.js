@@ -113,6 +113,22 @@ function emitWagerPlaced(player, playerName, tokensRemaining){
     io.emit("wager-placed", playerName);
 }
 
+function emitChangeAllToWagerScreen(){
+    for (const player in data.players){
+        emitChangeToWagerScreen(player);
+    }
+}
+
+function emitChangeAllToLiquidateScreen(){
+    for (const player in data.players){
+        emitChangeToLiquidateScreen(player);
+    }
+}
+
+function emitCardAdded(player){
+    io.to(player).emit("card-added", data.currentCard);
+}
+
 function emitChangeToWagerScreen(player){
     io.to(player).emit("change-to-wager-screen");
 }
@@ -187,10 +203,11 @@ io.on("connection", (socket) => {
             }
 
             data.addCardToPlayer(winningPlayer);
+            emitCardAdded(winningPlayer);
             data.currentWagers = {};
             data.resetWagered();
-            console.log(data);
-
+            console.log(data);            
+            emitChangeAllToLiquidateScreen();
         }
 
         emitWagerPlaced(socket.id, playerData.name, playerData.tokens);
