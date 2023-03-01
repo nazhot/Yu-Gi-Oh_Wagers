@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="/wagering-page.css" />
   </head>
   <body>
-    <div id="home-page">
+    <div id="home-page" class="screen-container">
       <label for="token-count" class="player-1-element" style="display: none">Tokens</label>
       <input type="number" name="token-count" id="token-count" class="player-1-element" style="display: none">
       <button type="button" id="start-game" class="player-1-element" style="display: none">Start Game</button>
       <p id="opponent-connected" style="display: none">Opponent Connected!</p>
     </div>
-    <div id="wagering-page">
+    <div id="wagering-page" class="screen-container">
       <div id="wagering-deck-container" class="deck-container">
         <div id="wagering-deck" class="deck">
 
@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <div id="liquidating-page" style="display: none">
+    <div id="liquidating-page" style="display: none" class="screen-container">
       <div id="liquidating-deck-container" class="deck-container">
         <div id="liquidating-deck" class="deck">
 
@@ -63,6 +63,13 @@
         socket.emit("place-wager", wager);
       }
 
+      function hideAllScreens(){
+        const screens = document.getElementsByClassName("screen-container");
+        for (const screen of screens){
+          screen.style.display = "none";
+        }
+      }
+
       socket.on("non-number-wager", () => {
 
       });
@@ -72,7 +79,10 @@
       });
 
       socket.on("self-wager-placed", (tokensRemaining) => {
-
+        const tokenElements = document.getElementsByClassName("player-token-count");
+        for(const tokenElement of tokenElements){
+          tokenElement.innerHTML = tokensRemaining;
+        }
       });
 
       socket.on("wager-placed", (playerThatPlacedWager) => {
@@ -84,11 +94,15 @@
       });
 
       socket.on("change-to-wager-screen", () => {
-
+        const wagerScreen = document.getElementById("wagering-page");
+        hideAllScreens();
+        wagerScreen.style.display = "";
       });
 
       socket.on("change-to-liquidate-screen", () => {
-
+        const liquidateScreen = document.getElementById("liquidating-page");
+        hideAllScreens();
+        liquidateScreen.style.display = "";
       });
 
       socket.on("card-added", (card) => {
