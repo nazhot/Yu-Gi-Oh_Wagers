@@ -64,7 +64,7 @@
           <span class="player-deck-size"> </span>
         </div>
         <div id="player-liquidation-options-container" class="submit-container">
-          <button id="liquidate-cards">Liquidate Card(s)</button>
+          <button id="liquidate-cards" onclick="submitLiquidate()">Liquidate Card(s)</button>
         </div>
       </div>
     </div>
@@ -88,6 +88,15 @@
         const wagerElement = document.getElementById("player-wager-amount");
         const wager        = wagerElement.value;
         socket.emit("place-wager", wager);
+      }
+
+      function submitLiquidate(){
+        const liquidateElements = document.getElementsByClassName("selected-card");
+        const cardIdsToLiquidate = [];
+        for (const cardToLiquidate of liquidateElements){
+          cardIdsToLiquidate.push(cardToLiquidate.cardId);
+        }
+        socket.emit("liquidate-cards", cardIdsToLiquidate);
       }
 
       function hideAllScreens(){
@@ -114,9 +123,15 @@
         return deckElements;
       }
 
+      function setWagerCard(cardId){
+        const shownCard = document.getElementById("shown-card");
+        shownCard.src = largeCardImageUrl + cardId + ".jpg";
+      }
+
       function addCard(cardId, deckElement){
         const card = document.createElement("img");
         card.src = smallCardImageUrl + cardId + ".jpg";
+        card.cardId = cardId;
         card.largeImage = largeCardImageUrl + cardId + ".jpg";
         card.onmouseover = () => {
           const largeCardElements = document.getElementsByClassName("large-card");
@@ -131,6 +146,10 @@
             largeCardElement.src = cardBackImage;
           }
         };
+
+        card.onclick = () => {
+          toggleCardSelect(card);
+        }
 
         deckElement.appendChild(card);
       }
@@ -153,8 +172,16 @@
         console.log("Insufficient tokens");
       });
 
+      socket.on("token-update", (tokensRemaining) => {
+        setTokenCount(tokensRemaining);
+      });
+
       socket.on("self-wager-placed", (tokensRemaining) => {
         setTokenCount(tokensRemaining);
+      });
+
+      socket.on("wager-card", (cardId) => {
+        setWagerCard(cardId);
       });
 
       socket.on("wager-placed", (playerThatPlacedWager) => {

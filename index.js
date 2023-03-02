@@ -31,6 +31,11 @@ const data = {
             this.players[player].wagered = false;
         }
     },
+    resetLiquidated(){
+        for(const player in this.players){
+            this.players[player].liquidated = false;
+        }
+    },
     getPlayersWithHighestWager() {
         let highestWager   = -1;
         let highestPlayers = [];
@@ -117,7 +122,9 @@ function emitWagerPlaced(player, playerName, tokensRemaining){
 function emitChangeAllToWagerScreen(){
     for (const player in data.players){
         emitChangeToWagerScreen(player);
+        emitWagerCard();
     }
+    
 }
 
 function emitChangeAllToLiquidateScreen(){
@@ -150,6 +157,30 @@ function emitNonNumberWager(player){
     io.to(player).emit("non-number-wager");
 }
 
+function emitTokenUpdate(player){
+    io.to(player).emit("token-update", data.players[player].tokens);
+}
+
+function emitWagerCard(){
+    for (const player in data.players){
+        io.to(player).emit("wager-card", data.currentCard)
+    }
+}
+
+function liquidateCard(player, cardId){
+    const playerData = data.players[player];
+    let counter = 0;
+    for(const card of playerData.cards){
+        if (card.id === cardId){
+            const value = card.value;
+            playerData.cards.splice(counter, 1);
+            return value;
+        }
+        counter++;
+    }
+    return null;
+}
+
 function isNumeric(stringToCheck){
     if (typeof stringToCheck !== "string") return false;
     return !isNaN(stringToCheck) &&
@@ -179,6 +210,10 @@ io.on("connection", (socket) => {
     socket.on("place-wager", (tokensWagered) => {
         const playerData = data.players[socket.id];
 
+        if (data.currentWagers[socket.id]){
+            console.log("Tried to redo wager");
+            return;
+        }
         if (!isNumeric(tokensWagered)){
             emitNonNumberWager(socket.id);
             return;
@@ -227,7 +262,7 @@ io.on("connection", (socket) => {
     socket.on("liquidate-cards", (cardsToLiquidate) => {
         const playerData = data.players[socket.id];
         for (const card of cardsToLiquidate){
-            const tokensToAdd = liquidateCard(card);
+            const tokensToAdd = liquidateCard(socket.id, card);
             if (tokensToAdd == null){
                 emitInvalidLiquidation(socket.id, card);
                 continue;
@@ -236,8 +271,17 @@ io.on("connection", (socket) => {
         }
 
         playerData.liquidated = true;
+        //emitTokenUpdate(socket.id);
 
         const allLiquidated = checkIfAllPlayersLiquidated();
+        if (allLiquidated){
+            data.resetLiquidated();
+            for (const player in data.players){
+                emitDeck(player);
+                emitTokenUpdate(player);
+            }
+            emitChangeAllToWagerScreen();
+        }
         console.log(allLiquidated);
     });
 
