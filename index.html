@@ -27,15 +27,18 @@
       </div>
 
       <div class="large-card-container">
-        
+        <img class="large-card" src="public/images/back.png">
       </div>
 
       <div class="bottom-nav-container">
         <div class="player-information-container">
-          <p class="player-token-count"> </p>
-          <p class="player-deck-size"> </p>
+          <span>Tokens:</span>
+          <span class="player-token-count"> </span>
+          <p></p>
+          <span>Deck Size:</span>
+          <span class="player-deck-size"> </span>
         </div>
-        <div id="player-wager-options-container">
+        <div id="player-wager-options-container" class="submit-container">
           <label for="player-wager-amount">Wager:</label>
           <input type="number" name="player-wager-amount" id="player-wager-amount">
           <button id="submit-wager" onclick="submitWager()">Submit Wager</button>
@@ -51,18 +54,32 @@
       </div>
       <div class="bottom-nav-container">
         <div class="player-information-container">
-          <p class="player-token-count"> </p>
-          <p class="player-deck-size"> </p>
+          <span>Tokens:</span>
+          <span class="player-token-count"> </span>
+          <p></p>
+          <span>Deck Size:</span>
+          <span class="player-deck-size"> </span>
         </div>
-        <div id="player-liquidation-options-container">
+        <div id="player-liquidation-options-container" class="submit-container">
           <button id="liquidate-cards">Liquidate Card(s)</button>
         </div>
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      let socket             = io();
+      const socket = io();
 
+      const cardBackImage = "/public/images/back.png";
+      const smallCardImageUrl = "https://images.ygoprodeck.com/images/cards_small/";
+      const largeCardImageUrl = "https://images.ygoprodeck.com/images/cards/";
+
+      function toggleCardSelect(cardElement){
+        if (cardElement.classList.contains("selected-card")) {
+          cardElement.classList.remove("selected-card");
+        } else {
+          cardElement.classList.add("selected-card");
+        }
+      }
 
       function submitWager(){
         const wagerElement = document.getElementById("player-wager-amount");
@@ -77,19 +94,60 @@
         }
       }
 
-      socket.on("non-number-wager", () => {
+      function setTokenCount(tokens){
+        const tokenElements = document.getElementsByClassName("player-token-count");
+        for (const tokenElement of tokenElements){
+          tokenElement.innerHTML = tokens;
+        }
+      }
 
+      function clearDeck(){
+        const deckElements = document.getElementsByClassName("deck");
+        for (const deckElement of deckElements){
+          while (deckElement.firstChild){
+            deckElement.removeChild(deckElement.lastChild);
+          }
+        }
+        return deckElements;
+      }
+
+      function addCard(cardId, deckElement){
+        const card = document.createElement("img");
+        card.src = smallCardImageUrl + cardId + ".jpg";
+        card.largeImage = largeCardImageUrl + cardId + ".jpg";
+        card.onmouseover = () => {
+          const largeCardElements = document.getElementsByClassName("large-card");
+          for (const largeCardElement of largeCardElements){
+            largeCardElement.src = card.largeImage;
+          }
+        };
+
+        card.onmouseleave = () => {
+          const largeCardElements = document.getElementsByClassName("large-card");
+          for (const largeCardElement of largeCardElements){
+            largeCardElement.src = cardBackImage;
+          }
+        };
+      }
+
+      function setDeck(cardList){
+        const deckElements = document.getElementsByClassName("deck");
+        clearDeck();
+
+
+        
+      }
+
+      socket.on("non-number-wager", () => {
+        console.log("Non number wager");
       });
 
       socket.on("insufficient-tokens", () => {
-
+        console.log("Insufficient tokens");
       });
 
       socket.on("self-wager-placed", (tokensRemaining) => {
-        const tokenElements = document.getElementsByClassName("player-token-count");
-        for(const tokenElement of tokenElements){
-          tokenElement.innerHTML = tokensRemaining;
-        }
+        setTokenCount(tokensRemaining);
       });
 
       socket.on("wager-placed", (playerThatPlacedWager) => {
@@ -97,7 +155,7 @@
       });
 
       socket.on("invalid-liquidation", () => {
-
+        console.log("Invalid liquidation");
       });
 
       socket.on("change-to-wager-screen", () => {

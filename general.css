@@ -20,11 +20,34 @@
 }
 
 .bottom-nav-container {
+    display: grid;
+    grid-template-areas: 'player-info . . . submit';
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-area: bottom-nav;
     border: 1px solid blue;
 }
 
 .large-card-container {
     grid-area: right-column;
-    border: 1px solid pink;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.large-card {
+    width: 80%;
+    margin: auto;
+}
+
+.player-information-container {
+    grid-area: player-info;
+    border: 1px solid black;
+}
+
+.submit-container {
+    grid-area: submit;
+    border: 1px solid black;
+}
+
+.selected-card {
+    border: 2px solid red;
 }

@@ -109,7 +109,7 @@ function emitInvalidLiquidation(player, card){
 }
 
 function emitWagerPlaced(player, playerName, tokensRemaining){
-    io.to(player).emit("self-placed-wager", tokensRemaining);
+    io.to(player).emit("self-wager-placed", tokensRemaining);
     io.emit("wager-placed", playerName);
 }
 
@@ -149,7 +149,7 @@ function isNumeric(stringToCheck){
 
 
 io.on("connection", (socket) => {
-
+    console.log(socket.id);
     if (data.numPlayers >= 2){
         if (data.numPlayers > 2){
             console.log("ERROR: More than 2 players allowed to enter");
@@ -187,8 +187,8 @@ io.on("connection", (socket) => {
         playerData.wagered            = true;
 
         const allWagered = checkIfAllPlayersWagered();
-        //console.log(data);
-        console.log(allWagered);
+        console.log(data);
+        //console.log(allWagered);
         if (allWagered){
             const winningPlayers    = data.getPlayersWithHighestWager();
             const numWinningPlayers = winningPlayers.length;

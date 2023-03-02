@@ -1,4 +1,10 @@
 #shown-card-container {
     grid-area: left-column;
     border: 1px solid green;
+    text-align: center;
+}
+
+#shown-card {
+    width: 80%;
+    margin: auto;
 }
