@@ -52,6 +52,9 @@
 
         </div>
       </div>
+      <div class="large-card-container">
+        <img class="large-card" src="public/images/back.png">
+      </div>
       <div class="bottom-nav-container">
         <div class="player-information-container">
           <span>Tokens:</span>
@@ -128,14 +131,18 @@
             largeCardElement.src = cardBackImage;
           }
         };
+
+        deckElement.appendChild(card);
       }
 
       function setDeck(cardList){
         const deckElements = document.getElementsByClassName("deck");
         clearDeck();
-
-
-        
+        for (const deckElement of deckElements){
+          for (const card of cardList){
+            addCard(card, deckElement);
+          }
+        }        
       }
 
       socket.on("non-number-wager", () => {
@@ -172,6 +179,10 @@
 
       socket.on("card-added", (card) => {
 
+      });
+
+      socket.on("deck", (cardList) => {
+        setDeck(cardList);
       });
 
     </script>

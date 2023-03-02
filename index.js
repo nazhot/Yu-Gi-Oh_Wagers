@@ -16,12 +16,13 @@ app.get("/", (req, res) => {
 const data = {
     numPlayers: 0,
     players: {},
-    currentCard: "Test",
+    currentCard: "22567609",
     currentWagers: {},
     cardList: [],
     addCardToPlayer(player){
         this.players[player].cards.push({
-            card:  this.currentCard,
+            id:  this.currentCard,
+            wager:  this.currentWagers[player],
             value: this.getLowestWager(),
         })
     },
@@ -125,6 +126,14 @@ function emitChangeAllToLiquidateScreen(){
     }
 }
 
+function emitDeck(player){
+    const deck = [];
+    for (const card of data.players[player].cards){
+        deck.push(card.id);
+    }
+    io.to(player).emit("deck", deck);
+}
+
 function emitCardAdded(player){
     io.to(player).emit("card-added", data.currentCard);
 }
@@ -206,7 +215,8 @@ io.on("connection", (socket) => {
             emitCardAdded(winningPlayer);
             data.currentWagers = {};
             data.resetWagered();
-            console.log(data);            
+            console.log(data);
+            emitDeck(winningPlayer);
             emitChangeAllToLiquidateScreen();
         }
 
