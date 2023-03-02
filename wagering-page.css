@@ -1,4 +1,4 @@
-#wagering-page {
-    display: grid;
-    grid-template-areas: 'deck';
+#shown-card-container {
+    grid-area: left-column;
+    border: 1px solid green;
 }

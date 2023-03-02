@@ -1,0 +1,30 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.screen-container {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-areas: 'left-column main-content right-column'
+                         'bottom-nav bottom-nav bottom-nav';
+    grid-template-rows: 8fr 1fr;
+    grid-template-columns: 1fr 7fr 1fr;
+}
+
+
+.deck-container {
+    grid-area: main-content;
+    border: 1px solid red;
+}
+
+.bottom-nav-container {
+    grid-area: bottom-nav;
+    border: 1px solid blue;
+}
+
+.large-card-container {
+    grid-area: right-column;
+    border: 1px solid pink;
+}

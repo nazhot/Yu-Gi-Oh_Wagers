@@ -4,25 +4,32 @@
     <title>Yu-Gi-Oh Wager</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/general.css"/>
     <link rel="stylesheet" href="/home-page.css" />
     <link rel="stylesheet" href="/wagering-page.css" />
   </head>
   <body>
-    <div id="home-page" class="screen-container">
+    <div id="home-page" class="screen-container" style="display: none">
       <label for="token-count" class="player-1-element" style="display: none">Tokens</label>
       <input type="number" name="token-count" id="token-count" class="player-1-element" style="display: none">
       <button type="button" id="start-game" class="player-1-element" style="display: none">Start Game</button>
       <p id="opponent-connected" style="display: none">Opponent Connected!</p>
     </div>
     <div id="wagering-page" class="screen-container">
-      <div id="wagering-deck-container" class="deck-container">
-        <div id="wagering-deck" class="deck">
 
-        </div>
-      </div>
-      <div id="shown-card-container" style="display: none">
+      <div id="shown-card-container">
         <img id="shown-card" src="public/images/back.png">
       </div>
+
+      <div id="wagering-deck-container" class="deck-container">
+        <div id="wagering-deck" class="deck">
+        </div>
+      </div>
+
+      <div class="large-card-container">
+        
+      </div>
+
       <div class="bottom-nav-container">
         <div class="player-information-container">
           <p class="player-token-count"> </p>
