@@ -13,6 +13,17 @@ app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
+/**
+ * TODO: replace with a version that will support multiple rooms at once
+ * TODO: add cardList property, {array}, that contains all of the card ids from the cube
+ * Contains all of the data for the program. 
+ * {number} numPlayers    how many players have connected // TODO: remove in the future and replace with just counting members of the room
+ * {object} players       properties are the socket ids of the players that have connected, values are another object containing player specific data
+ * {string} currentCard   the card id of the card currently up for auction
+ * {object} currentWagers properties are the socket ids of the players that have wagered already, value is how many tokens they wagered up
+ * {array}  cardList      needs to be implemented, will be the list of card ids available for auction
+ * 
+ */
 const data = {
     numPlayers: 0,
     players: {},
@@ -88,6 +99,11 @@ function defaultPlayerData(){
     };
 }
 
+/**
+ * 
+ * @param {*} propertyName 
+ * @returns 
+ */
 function checkAllProperties(propertyName){
     for (const prop in data.players){
         if (!data.players[prop][propertyName]){
@@ -271,7 +287,6 @@ io.on("connection", (socket) => {
         }
 
         playerData.liquidated = true;
-        //emitTokenUpdate(socket.id);
 
         const allLiquidated = checkIfAllPlayersLiquidated();
         if (allLiquidated){
