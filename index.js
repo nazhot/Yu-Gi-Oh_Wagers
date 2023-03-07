@@ -88,6 +88,10 @@ const data = {
     }
 };
 
+/**
+ * The default data given to each player when they join
+ * @returns {object} default values for the player
+ */
 function defaultPlayerData(){
     return {
         name: "",
@@ -100,26 +104,25 @@ function defaultPlayerData(){
 }
 
 /**
- * 
- * @param {*} propertyName 
- * @returns 
+ * Checks if every player has propertyName set to true
+ * @param {string} propertyName name of the property within the player object
+ * @returns {boolean} if all of the players have propertyName set to true
  */
-function checkAllProperties(propertyName){
+function checkIfAllPropertiesTrue(propertyName){
     for (const prop in data.players){
         if (!data.players[prop][propertyName]){
             return false;
         }
     }
-
     return true;
 }
 
 function checkIfAllPlayersWagered(){
-    return checkAllProperties("wagered");
+    return checkIfAllPropertiesTrue("wagered");
 }
 
 function checkIfAllPlayersLiquidated(){
-    return checkAllProperties("liquidated");
+    return checkIfAllPropertiesTrue("liquidated");
 }
 
 function emitInsufficientTokens(player){
