@@ -37,14 +37,35 @@ const data = {
             value: this.getLowestWager(),
         })
     },
-    resetWagered(){
+    setPlayerStatus(player, property, status){
+        this.players[player][property] = status;
+    },
+    resetStatuses(property){
         for(const player in this.players){
-            this.players[player].wagered = false;
+            this.players[player][property] = false;
         }
     },
+    resetWagered(){
+        this.resetStatuses("wagered");
+    },
     resetLiquidated(){
-        for(const player in this.players){
-            this.players[player].liquidated = false;
+        this.resetStatuses("liquidated");
+    },
+    resetReadied(){
+        this.resetStatuses("readied");
+    },
+    getAllPlayersStatus(property){
+        const returnData = {};
+        for (const player in this.players){
+            returnData[player] = this.players[player][property];
+        }
+        return returnData;
+    },
+    resetAllPlayersStatuses(){
+        for (const player in this.palyers){
+            this.resetLiquidated();
+            this.resetLiquidated();
+            this.resetReadied();
         }
     },
     getPlayersWithHighestWager() {
@@ -99,6 +120,7 @@ function defaultPlayerData(){
         cards: [], //format should be {card number, price you paid, price opponent paid}
         wagered: false,
         liquidated: false,
+        readied: false,
         tieWins: 0,
     };
 }
@@ -186,6 +208,12 @@ function emitWagerCard(){
     }
 }
 
+function emitAllPlayersStatus(property){
+    const playerStatuses = data.getAllPlayersStatus(property);
+    const statusName = "update-" + property + "-statuses";
+    io.emit(statusName, playerStatuses);
+}
+
 function liquidateCard(player, cardId){
     const playerData = data.players[player];
     let counter = 0;
@@ -247,7 +275,8 @@ io.on("connection", (socket) => {
 
         playerData.tokens            -= tokensWagered;
         data.currentWagers[socket.id] = tokensWagered;
-        playerData.wagered            = true;
+
+        data.setPlayerStatus(socket.id, "wagered", true);
 
         const allWagered = checkIfAllPlayersWagered();
         console.log(data);
@@ -301,6 +330,12 @@ io.on("connection", (socket) => {
             emitChangeAllToWagerScreen();
         }
         console.log(allLiquidated);
+    });
+
+    socket.on("update-readied-status", (statusString) => {
+        const statusBoolean = statusString === "ready";
+        data.setPlayerStatus(socket.id, "readied", statusBoolean);
+        emitAllPlayersStatus("readied");
     });
 
     socket.on("disconnecting", () => {

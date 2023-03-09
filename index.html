@@ -9,13 +9,14 @@
     <link rel="stylesheet" href="/wagering-page.css" />
   </head>
   <body>
-    <div id="home-page" class="screen-container" style="display: none">
+    <div id="home-page" class="screen-container">
       <label for="token-count" class="player-1-element" style="display: none">Tokens</label>
       <input type="number" name="token-count" id="token-count" class="player-1-element" style="display: none">
       <button type="button" id="start-game" class="player-1-element" style="display: none">Start Game</button>
       <p id="opponent-connected" style="display: none">Opponent Connected!</p>
+      <button type="button" id="player-ready-button" class="not-ready" onclick="swapReadyStatus(this)">NOT READY</button>
     </div>
-    <div id="wagering-page" class="screen-container">
+    <div id="wagering-page" class="screen-container" style="display:none">
 
       <div id="shown-card-container">
         <img id="shown-card" src="public/images/back.png">
@@ -82,6 +83,23 @@
         } else {
           cardElement.classList.add("selected-card");
         }
+      }
+
+      function submitReadyStatus(status){
+        socket.emit("update-readied-status", status);
+      }
+
+      function swapReadyStatus(readyButtonElement){
+        const elementClass = readyButtonElement.className;
+        if (elementClass === "ready"){
+          readyButtonElement.className = "not-ready";
+          readyButtonElement.innerHTML = "NOT READY";
+        } else if (elementClass === "not-ready"){
+          readyButtonElement.className = "ready";
+          readyButtonElement.innerHTML = "READY";
+        }
+
+        submitReadyStatus(readyButtonElement.className);
       }
 
       function submitWager(){
@@ -202,6 +220,12 @@
         const liquidateScreen = document.getElementById("liquidating-page");
         hideAllScreens();
         liquidateScreen.style.display = "";
+      });
+
+      socket.on("update-readied-statuses", (playerStatuses) => {
+        for (const player in playerStatuses){
+          const status = playerStatuses[player];
+        }
       });
 
       socket.on("card-added", (card) => {

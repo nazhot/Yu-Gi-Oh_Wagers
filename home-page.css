@@ -4,3 +4,11 @@
 #home-page {
     
 }
+
+.ready {
+    background-color: green;
+}
+
+.not-ready {
+    background-color: red;
+}
