@@ -223,8 +223,12 @@
       });
 
       socket.on("update-readied-statuses", (playerStatuses) => {
+        let allReady = true;
         for (const player in playerStatuses){
-          const status = playerStatuses[player];
+          const playerReady = playerStatuses[player];
+          if (allReady && !playerReady){
+            allReady = false;
+          }
         }
       });
 
