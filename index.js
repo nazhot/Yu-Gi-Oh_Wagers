@@ -215,6 +215,12 @@ function emitAllPlayersStatus(property){
     console.log(playerStatuses);
 }
 
+function emitAllPlayersTokens(){
+    for(const player in data.players){
+        emitTokenUpdate(player);
+    }
+}
+
 function liquidateCard(player, cardId){
     const playerData = data.players[player];
     let counter = 0;
@@ -260,6 +266,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("start-game", () => {
+        emitAllPlayersTokens();
         emitChangeAllToWagerScreen();
     });
 
