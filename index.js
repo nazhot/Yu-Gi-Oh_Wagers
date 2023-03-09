@@ -212,6 +212,7 @@ function emitAllPlayersStatus(property){
     const playerStatuses = data.getAllPlayersStatus(property);
     const statusName = "update-" + property + "-statuses";
     io.emit(statusName, playerStatuses);
+    console.log(playerStatuses);
 }
 
 function liquidateCard(player, cardId){
@@ -244,6 +245,10 @@ io.on("connection", (socket) => {
         return;
     }
 
+    if (data.numPlayers === 0){
+        io.to(socket.id).emit("is-player-1");
+    }
+
     data.players[socket.id] = defaultPlayerData();
     data.numPlayers++;
 
@@ -252,6 +257,10 @@ io.on("connection", (socket) => {
             return;
         }
         data.players[socket.id].name = name;
+    });
+
+    socket.on("start-game", () => {
+        emitChangeAllToWagerScreen();
     });
 
     socket.on("place-wager", (tokensWagered) => {
@@ -332,9 +341,9 @@ io.on("connection", (socket) => {
         console.log(allLiquidated);
     });
 
-    socket.on("update-readied-status", (statusString) => {
-        const statusBoolean = statusString === "ready";
-        data.setPlayerStatus(socket.id, "readied", statusBoolean);
+    socket.on("update-readied-status", (status) => {
+        
+        data.setPlayerStatus(socket.id, "readied", status);
         emitAllPlayersStatus("readied");
     });
 

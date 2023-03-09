@@ -51,3 +51,7 @@
 .selected-card {
     border: 2px solid red;
 }
+
+.player-1-element {
+    display: block;
+}

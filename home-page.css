@@ -12,3 +12,8 @@
 .not-ready {
     background-color: red;
 }
+
+#start-game-button {
+    opacity: 0.3;
+}
+
