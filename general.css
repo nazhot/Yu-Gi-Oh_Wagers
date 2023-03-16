@@ -60,3 +60,7 @@
     grid-area: request-end;
     display: block;
 }
+
+.deck-card {
+    width: 10%;
+}

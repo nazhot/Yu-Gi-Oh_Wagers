@@ -19,6 +19,7 @@
     <div id="wagering-page" class="screen-container" style="display:none">
 
       <div id="shown-card-container">
+        <p>Wagered Card</p>
         <img id="shown-card" src="public/images/back.png">
       </div>
 
@@ -28,6 +29,7 @@
       </div>
 
       <div class="large-card-container">
+        <p>Hovered Card</p>
         <img class="large-card" src="public/images/back.png">
       </div>
 
@@ -55,6 +57,7 @@
         </div>
       </div>
       <div class="large-card-container">
+        <p>Hovered Card</p>
         <img class="large-card" src="public/images/back.png">
       </div>
       <div class="bottom-nav-container">
@@ -200,6 +203,7 @@
 
       function addCard(cardId, deckElement){
         const card = document.createElement("img");
+        card.classList.add("deck-card")
         card.src = smallCardImageUrl + cardId + ".jpg";
         card.cardId = cardId;
         card.largeImage = largeCardImageUrl + cardId + ".jpg";
