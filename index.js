@@ -45,6 +45,9 @@ const data = {
             this.players[player][property] = false;
         }
     },
+    resetRequestedEnd(){
+        this.resetStatuses("requestedEnd");
+    },
     resetWagered(){
         this.resetStatuses("wagered");
     },
@@ -61,11 +64,20 @@ const data = {
         }
         return returnData;
     },
+    getAllPlayersAtLeastXCards(numCards){
+        for (const player in this.players){
+            if(this.players[player].cards.length < numCards){
+                return false;
+            }
+        }
+        return true;
+    },
     resetAllPlayersStatuses(){
-        for (const player in this.palyers){
+        for (const player in this.players){
             this.resetLiquidated();
             this.resetLiquidated();
             this.resetReadied();
+            this.resetRequestedEnd();
         }
     },
     getPlayersWithHighestWager() {
@@ -111,7 +123,6 @@ const data = {
 
 const cardList = fs.readFileSync("public/cardLists/Draft Masters", "utf-8").split("\n");
 shuffleArray(cardList);
-console.log(cardList[0]);
 data.cardList = cardList;
 
 function shuffleArray(array) {
@@ -133,6 +144,7 @@ function defaultPlayerData(){
         wagered: false,
         liquidated: false,
         readied: false,
+        requestedEnd: false,
         tieWins: 0,
     };
 }
@@ -157,6 +169,10 @@ function checkIfAllPlayersWagered(){
 
 function checkIfAllPlayersLiquidated(){
     return checkIfAllPropertiesTrue("liquidated");
+}
+
+function checkIfAllPlayersRequestedEnd(){
+    return checkIfAllPropertiesTrue("requestedEnd");
 }
 
 function emitInsufficientTokens(player){
@@ -186,6 +202,12 @@ function emitChangeAllToLiquidateScreen(){
     }
 }
 
+function emitChangeAllToEndScreen(){
+    for (const player in data.players){
+        emitChangeToEndScreen(player);
+    }
+}
+
 function emitDeck(player){
     const deck = [];
     for (const card of data.players[player].cards){
@@ -204,6 +226,22 @@ function emitChangeToWagerScreen(player){
 
 function emitChangeToLiquidateScreen(player){
     io.to(player).emit("change-to-liquidate-screen");
+}
+
+function emitChangeToEndScreen(player){
+    io.to(player).emit("change-to-end-screen");
+}
+
+function emitShowAllEndButtons(){
+    for(const player in data.players){
+        io.to(player).emit("show-end-button");
+    }
+}
+
+function emitHideAllEndButtons(){
+    for(const player in data.players){
+        io.to(player).emit("hide-end-button");
+    }
 }
 
 function emitNonNumberWager(player){
@@ -325,7 +363,7 @@ io.on("connection", (socket) => {
             data.addCardToPlayer(winningPlayer);
             emitCardAdded(winningPlayer);
             data.currentWagers = {};
-            data.resetWagered();
+            data.resetAllPlayersStatuses();
             console.log(data);
             emitDeck(winningPlayer);
             emitChangeAllToLiquidateScreen();
@@ -350,7 +388,7 @@ io.on("connection", (socket) => {
 
         const allLiquidated = checkIfAllPlayersLiquidated();
         if (allLiquidated){
-            data.resetLiquidated();
+            data.resetAllPlayersStatuses();
             for (const player in data.players){
                 emitDeck(player);
                 emitTokenUpdate(player);
@@ -360,8 +398,21 @@ io.on("connection", (socket) => {
         console.log(allLiquidated);
     });
 
+    /**
+     * Client sends this message via the end button, is totally manual
+     */
+    socket.on("request-end", () => {
+        data.setPlayerStatus(socket.id, "requestedEnd", true);
+        const allWantEnd = checkIfAllPlayersRequestedEnd();
+
+        if (!allWantEnd){
+            return;
+        }
+
+        emitChangeAllToEndScreen();
+    });
+
     socket.on("update-readied-status", (status) => {
-        
         data.setPlayerStatus(socket.id, "readied", status);
         emitAllPlayersStatus("readied");
     });

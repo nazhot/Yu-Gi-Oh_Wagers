@@ -21,7 +21,7 @@
 
 .bottom-nav-container {
     display: grid;
-    grid-template-areas: 'player-info . . . submit';
+    grid-template-areas: 'player-info . . request-end submit';
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-area: bottom-nav;
     border: 1px solid blue;
@@ -53,5 +53,10 @@
 }
 
 .player-1-element {
+    display: block;
+}
+
+.request-end {
+    grid-area: request-end;
     display: block;
 }

@@ -39,6 +39,7 @@
           <span>Deck Size:</span>
           <span class="player-deck-size"> </span>
         </div>
+        <button class="request-end" style="display: none">PLZ STOP</button>
         <div id="player-wager-options-container" class="submit-container">
           <label for="player-wager-amount">Wager:</label>
           <input type="number" name="player-wager-amount" id="player-wager-amount">
@@ -64,10 +65,14 @@
           <span>Deck Size:</span>
           <span class="player-deck-size"> </span>
         </div>
+        <button class="request-end" style="display: none">PLZ STOP</button>
         <div id="player-liquidation-options-container" class="submit-container">
           <button id="liquidate-cards" onclick="submitLiquidate()">Liquidate Card(s)</button>
         </div>
       </div>
+    </div>
+    <div id="end-page" style="display: none">
+      <button id="download-deck">Download</button>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -124,6 +129,13 @@
         }
       }
 
+      function changeToScreen(screenName){
+        const screen = document.getElementById(screenName);
+        hideAllScreens();
+        screen.style.display = "";
+        return screen;
+      }
+
       function setTokenCount(tokens){
         const tokenElements = document.getElementsByClassName("player-token-count");
         for (const tokenElement of tokenElements){
@@ -139,6 +151,13 @@
           }
         }
         return deckElements;
+      }
+
+      function changeEndButtonDisplay(display){
+        const endButtons = document.getElementsByClassName("request-end");
+        for (const endButton of endButtons){
+          endButtons.style.display = display;
+        }
       }
 
       function setWagerCard(cardId){
@@ -224,15 +243,23 @@
       });
 
       socket.on("change-to-wager-screen", () => {
-        const wagerScreen = document.getElementById("wagering-page");
-        hideAllScreens();
-        wagerScreen.style.display = "";
+        changeToScreen("wagering-page");
       });
 
       socket.on("change-to-liquidate-screen", () => {
-        const liquidateScreen = document.getElementById("liquidating-page");
-        hideAllScreens();
-        liquidateScreen.style.display = "";
+        changeToScreen("liquidating-page");
+      });
+
+      socket.on("change-to-end-screen", () => {
+        changeToScreen("end-page");
+      });
+
+      socket.on("show-end-button", () => {
+        changeEndButtonDisplay("");
+      });
+
+      socket.on("hide-end-button", () => {
+        changeEndButtonDisplay("none");
       });
 
       socket.on("update-readied-statuses", (playerStatuses) => {
