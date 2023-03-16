@@ -72,7 +72,7 @@
       </div>
     </div>
     <div id="end-page" style="display: none">
-      <button id="download-deck">Download</button>
+      <button id="download-deck" onclick="submitDownload()"">Download</button>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -97,6 +97,10 @@
       function submitRequestEnd(element){
         socket.emit("request-end");
         element.style.opacity = "0.3";
+      }
+
+      function submitDownload(){
+        socket.emit("download");
       }
 
       function swapReadyStatus(readyButtonElement){
@@ -179,6 +183,19 @@
       function setWagerCard(cardId){
         const shownCard = document.getElementById("shown-card");
         shownCard.src = largeCardImageUrl + cardId + ".jpg";
+      }
+
+      function download(filename, text) {
+        const element = document.createElement('a');
+              element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+              element.setAttribute('download', filename);
+              element.style.display = 'none';
+
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
       }
 
       function addCard(cardId, deckElement){
@@ -276,6 +293,10 @@
 
       socket.on("hide-end-button", () => {
         changeEndButtonDisplay("none");
+      });
+
+      socket.on("download", (ydkFile) => {
+        download("WagerDeck.ydk", ydkFile);
       });
 
       socket.on("update-readied-statuses", (playerStatuses) => {

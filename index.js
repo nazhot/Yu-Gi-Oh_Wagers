@@ -37,6 +37,15 @@ const data = {
             value: this.getLowestWager(),
         })
     },
+    getPlayerYDKFile(player){
+        let ydkFile = "#main";
+        for (const cardIndex in this.players[player].cards){
+            const cardId = this.players[player].cards[cardIndex].id;
+            ydkFile += "\n" + cardId;
+        }
+
+        return ydkFile;
+    },
     setCurrentCardFromCardList(){
         this.currentCard = cardList.pop();
     },
@@ -306,6 +315,8 @@ function updateEndButtonsBasedOnCardChange(before, after){
     }
 }
 
+
+
 function isNumeric(stringToCheck){
     if (typeof stringToCheck !== "string") return false;
     return !isNaN(stringToCheck) &&
@@ -452,6 +463,10 @@ io.on("connection", (socket) => {
         }
 
         emitChangeAllToEndScreen();
+    });
+
+    socket.on("download", () => {
+        io.to(socket.id).emit("download", data.getPlayerYDKFile(socket.id));
     });
 
     socket.on("update-readied-status", (status) => {
