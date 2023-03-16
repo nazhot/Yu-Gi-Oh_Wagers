@@ -109,6 +109,18 @@ const data = {
     }
 };
 
+const cardList = fs.readFileSync("public/cardLists/Draft Masters", "utf-8").split("\n");
+shuffleArray(cardList);
+console.log(cardList[0]);
+data.cardList = cardList;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 /**
  * The default data given to each player when they join
  * @returns {object} default values for the player
