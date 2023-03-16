@@ -285,6 +285,16 @@ function liquidateCard(player, cardId){
     return null;
 }
 
+function updateEndButtonsBasedOnCardChange(before, after){
+    if (before !== after){
+        if (after){
+            emitShowAllEndButtons();
+        } else {
+            emitHideAllEndButtons();
+        }
+    }
+}
+
 function isNumeric(stringToCheck){
     if (typeof stringToCheck !== "string") return false;
     return !isNaN(stringToCheck) &&
@@ -348,10 +358,12 @@ io.on("connection", (socket) => {
         console.log(data);
         //console.log(allWagered);
         if (allWagered){
-            const winningPlayers    = data.getPlayersWithHighestWager();
-            const numWinningPlayers = winningPlayers.length;
-            const lowestWager       = data.getLowestWager();
-            let   winningPlayer     = null;
+            const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
+            const winningPlayers         = data.getPlayersWithHighestWager();
+            const numWinningPlayers      = winningPlayers.length;
+            const lowestWager            = data.getLowestWager();
+            let   winningPlayer          = null;
+
             if (numWinningPlayers > 1){
                 const elligiblePlayers = data.getPlayersWithLeastTieWins();
                       winningPlayer    = elligiblePlayers[Math.floor(Math.random()*elligiblePlayers.length)];
@@ -367,6 +379,10 @@ io.on("connection", (socket) => {
             console.log(data);
             emitDeck(winningPlayer);
             emitChangeAllToLiquidateScreen();
+
+            const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
+            updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
+
         }
 
         emitWagerPlaced(socket.id, playerData.name, playerData.tokens);
@@ -375,6 +391,7 @@ io.on("connection", (socket) => {
 
     socket.on("liquidate-cards", (cardsToLiquidate) => {
         const playerData = data.players[socket.id];
+        const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
         for (const card of cardsToLiquidate){
             const tokensToAdd = liquidateCard(socket.id, card);
             if (tokensToAdd == null){
@@ -383,6 +400,10 @@ io.on("connection", (socket) => {
             }
             playerData.tokens += tokensToAdd;
         }
+
+        const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
+
+        updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
 
         playerData.liquidated = true;
 
