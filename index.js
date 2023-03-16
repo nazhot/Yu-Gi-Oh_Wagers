@@ -41,7 +41,7 @@ const data = {
         this.players[player][property] = status;
     },
     resetStatuses(property){
-        for(const player in this.players){
+        for (const player in this.players){
             this.players[player][property] = false;
         }
     },
@@ -83,7 +83,7 @@ const data = {
     getPlayersWithHighestWager() {
         let highestWager   = -1;
         let highestPlayers = [];
-        for(const [player, wager] of Object.entries(this.currentWagers)){
+        for (const [player, wager] of Object.entries(this.currentWagers)){
             if (wager === highestWager){
                 highestPlayers.push(player);
                 continue;
@@ -106,7 +106,7 @@ const data = {
     getPlayersWithLeastTieWins() {
         let lowestTieWins = 100;
         let lowestPlayers = [];
-        for(const player in this.players){
+        for (const player in this.players){
             const ties = this.players[player].tieWins;
             if (ties === lowestTieWins){
                 lowestPlayers.push(player);
@@ -233,13 +233,13 @@ function emitChangeToEndScreen(player){
 }
 
 function emitShowAllEndButtons(){
-    for(const player in data.players){
+    for (const player in data.players){
         io.to(player).emit("show-end-button");
     }
 }
 
 function emitHideAllEndButtons(){
-    for(const player in data.players){
+    for (const player in data.players){
         io.to(player).emit("hide-end-button");
     }
 }
@@ -266,7 +266,7 @@ function emitAllPlayersStatus(property){
 }
 
 function emitAllPlayersTokens(){
-    for(const player in data.players){
+    for (const player in data.players){
         emitTokenUpdate(player);
     }
 }
@@ -423,7 +423,12 @@ io.on("connection", (socket) => {
      * Client sends this message via the end button, is totally manual
      */
     socket.on("request-end", () => {
+        if (!data.getAllPlayersAtLeastXCards(40)){
+            return;
+        }
+
         data.setPlayerStatus(socket.id, "requestedEnd", true);
+        
         const allWantEnd = checkIfAllPlayersRequestedEnd();
 
         if (!allWantEnd){

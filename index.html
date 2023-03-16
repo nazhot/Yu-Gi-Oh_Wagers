@@ -39,7 +39,7 @@
           <span>Deck Size:</span>
           <span class="player-deck-size"> </span>
         </div>
-        <button class="request-end" style="display: none">PLZ STOP</button>
+        <button class="request-end" style="display: none" onclick="submitRequestEnd(this)">PLZ STOP</button>
         <div id="player-wager-options-container" class="submit-container">
           <label for="player-wager-amount">Wager:</label>
           <input type="number" name="player-wager-amount" id="player-wager-amount">
@@ -94,6 +94,11 @@
         socket.emit("update-readied-status", status);
       }
 
+      function submitRequestEnd(element){
+        socket.emit("request-end");
+        element.style.opacity = "0.3";
+      }
+
       function swapReadyStatus(readyButtonElement){
         const elementClass = readyButtonElement.className;
         if (elementClass === "ready"){
@@ -128,11 +133,22 @@
           screen.style.display = "none";
         }
       }
+      
+      function resetEndButtonOpacity(){
+        const endButtons = document.getElementsByClassName("request-end");
+        for (const endButton of endButtons){
+          endButton.style.opacity = "1.0";
+        }
+      }
 
       function changeToScreen(screenName){
-        const screen = document.getElementById(screenName);
+        const screen     = document.getElementById(screenName);
+        
         hideAllScreens();
+        resetEndButtonOpacity();
+
         screen.style.display = "";
+
         return screen;
       }
 
