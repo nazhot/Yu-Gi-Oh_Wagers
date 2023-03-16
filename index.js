@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 const data = {
     numPlayers: 0,
     players: {},
-    currentCard: "22567609",
+    currentCard: "",
     currentWagers: {},
     cardList: [],
     addCardToPlayer(player){
@@ -36,6 +36,12 @@ const data = {
             wager:  this.currentWagers[player],
             value: this.getLowestWager(),
         })
+    },
+    setCurrentCardFromCardList(){
+        this.currentCard = cardList.pop();
+    },
+    getCardsRemaining(){
+        return this.cardList.length;
     },
     setPlayerStatus(player, property, status){
         this.players[player][property] = status;
@@ -163,6 +169,11 @@ function checkIfAllPropertiesTrue(propertyName){
     return true;
 }
 
+function resetCardList(){
+    shuffleArray(cardList);
+    data.cardList = cardList;
+}
+
 function checkIfAllPlayersWagered(){
     return checkIfAllPropertiesTrue("wagered");
 }
@@ -262,7 +273,7 @@ function emitAllPlayersStatus(property){
     const playerStatuses = data.getAllPlayersStatus(property);
     const statusName = "update-" + property + "-statuses";
     io.emit(statusName, playerStatuses);
-    console.log(playerStatuses);
+    //console.log(playerStatuses);
 }
 
 function emitAllPlayersTokens(){
@@ -326,6 +337,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("start-game", () => {
+        data.setCurrentCardFromCardList();
         emitAllPlayersTokens();
         emitChangeAllToWagerScreen();
     });
@@ -355,7 +367,7 @@ io.on("connection", (socket) => {
         data.setPlayerStatus(socket.id, "wagered", true);
 
         const allWagered = checkIfAllPlayersWagered();
-        console.log(data);
+        //console.log(data);
         //console.log(allWagered);
         if (allWagered){
             const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
@@ -376,13 +388,17 @@ io.on("connection", (socket) => {
             emitCardAdded(winningPlayer);
             data.currentWagers = {};
             data.resetAllPlayersStatuses();
-            console.log(data);
+            //console.log(data);
             emitDeck(winningPlayer);
+            if (data.getCardsRemaining() === 0){
+                emitChangeAllToEndScreen();
+                return;
+            }
             emitChangeAllToLiquidateScreen();
 
             const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
             updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
-
+            data.setCurrentCardFromCardList();
         }
 
         emitWagerPlaced(socket.id, playerData.name, playerData.tokens);
@@ -416,7 +432,7 @@ io.on("connection", (socket) => {
             }
             emitChangeAllToWagerScreen();
         }
-        console.log(allLiquidated);
+        //console.log(allLiquidated);
     });
 
     /**
