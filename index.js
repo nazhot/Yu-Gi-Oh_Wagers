@@ -213,7 +213,6 @@ function emitChangeAllToWagerScreen(){
         emitChangeToWagerScreen(player);
         emitWagerCard();
     }
-    
 }
 
 function emitChangeAllToLiquidateScreen(){
@@ -291,6 +290,12 @@ function emitAllPlayersTokens(){
     }
 }
 
+function emitAllPlayersDeckSize(){
+    for (const player in data.players){
+        io.to(player).emit("deck-size-update", data.players[player].cards.length);
+    }
+}
+
 function liquidateCard(player, cardId){
     const playerData = data.players[player];
     let counter = 0;
@@ -349,6 +354,7 @@ io.on("connection", (socket) => {
 
     socket.on("start-game", () => {
         data.setCurrentCardFromCardList();
+        emitAllPlayersDeckSize();
         emitAllPlayersTokens();
         emitChangeAllToWagerScreen();
     });
@@ -406,6 +412,7 @@ io.on("connection", (socket) => {
                 return;
             }
             emitChangeAllToLiquidateScreen();
+            emitAllPlayersDeckSize();
 
             const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
             updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
@@ -441,6 +448,7 @@ io.on("connection", (socket) => {
                 emitDeck(player);
                 emitTokenUpdate(player);
             }
+            emitAllPlayersDeckSize();
             emitChangeAllToWagerScreen();
         }
         //console.log(allLiquidated);

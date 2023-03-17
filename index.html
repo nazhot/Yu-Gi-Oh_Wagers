@@ -166,6 +166,13 @@
         }
       }
 
+      function setDeckSize(deckSize){
+        const deckSizeElements = document.getElementsByClassName("player-deck-size");
+        for (const deckSizeElement of deckSizeElements){
+          deckSizeElement.innerHTML = deckSize;
+        }
+      }
+
       function clearDeck(){
         const deckElements = document.getElementsByClassName("deck");
         for (const deckElement of deckElements){
@@ -261,6 +268,10 @@
 
       socket.on("token-update", (tokensRemaining) => {
         setTokenCount(tokensRemaining);
+      });
+
+      socket.on("deck-size-update", (deckSize) => {
+        setDeckSize(deckSize);
       });
 
       socket.on("self-wager-placed", (tokensRemaining) => {
