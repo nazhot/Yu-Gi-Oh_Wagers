@@ -15,6 +15,7 @@
 
 
 .deck-container {
+    overflow-y: scroll;
     grid-area: main-content;
     border: 1px solid red;
 }
