@@ -90,7 +90,7 @@ const data = {
     resetAllPlayersStatuses(){
         for (const player in this.players){
             this.resetLiquidated();
-            this.resetLiquidated();
+            this.resetWagered();
             this.resetReadied();
             this.resetRequestedEnd();
         }
