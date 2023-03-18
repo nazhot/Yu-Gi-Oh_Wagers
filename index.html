@@ -40,6 +40,9 @@
           <p></p>
           <span>Deck Size:</span>
           <span class="player-deck-size"> </span>
+          <p></p>
+          <span>Cards Remaining:</span>
+          <span class="player-cards-remaining"></span>
         </div>
         <button class="request-end" style="display: none" onclick="submitRequestEnd(this)">PLZ STOP</button>
         <div id="player-wager-options-container" class="submit-container">
@@ -67,6 +70,9 @@
           <p></p>
           <span>Deck Size:</span>
           <span class="player-deck-size"> </span>
+          <p></p>
+          <span>Cards Remaining:</span>
+          <span class="player-cards-remaining"></span>
         </div>
         <button class="request-end" style="display: none">PLZ STOP</button>
         <div id="player-liquidation-options-container" class="submit-container">
@@ -160,16 +166,21 @@
       }
 
       function setTokenCount(tokens){
-        const tokenElements = document.getElementsByClassName("player-token-count");
-        for (const tokenElement of tokenElements){
-          tokenElement.innerHTML = tokens;
-        }
+        setInfoPanes("player-token-count", tokens);
       }
 
       function setDeckSize(deckSize){
-        const deckSizeElements = document.getElementsByClassName("player-deck-size");
-        for (const deckSizeElement of deckSizeElements){
-          deckSizeElement.innerHTML = deckSize;
+        setInfoPanes("player-deck-size", deckSize);
+      }
+
+      function setRemainingCards(cardsRemaining){
+        setInfoPanes("player-cards-remaining", cardsRemaining);
+      }
+
+      function setInfoPanes(elementClass, value){
+        const elements = document.getElementsByClassName(elementClass);
+        for (const element of elements){
+          element.innerHTML = value;
         }
       }
 
@@ -272,6 +283,10 @@
 
       socket.on("deck-size-update", (deckSize) => {
         setDeckSize(deckSize);
+      });
+
+      socket.on("cards-remaining-update", (cardsRemaining) => {
+        setRemainingCards(cardsRemaining);
       });
 
       socket.on("self-wager-placed", (tokensRemaining) => {

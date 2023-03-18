@@ -95,6 +95,9 @@ const data = {
             this.resetRequestedEnd();
         }
     },
+    getNumRemainingCards(){
+        return this.cardList.length;
+    },
     getPlayersWithHighestWager() {
         let highestWager   = -1;
         let highestPlayers = [];
@@ -284,6 +287,13 @@ function emitAllPlayersStatus(property){
     //console.log(playerStatuses);
 }
 
+function emitAllCardsRemaining(){
+    const cardsRemaining = data.getCardsRemaining();
+    for (const player in data.players){
+        io.to(player).emit("cards-remaining-update", cardsRemaining);
+    }
+}
+
 function emitAllPlayersTokens(){
     for (const player in data.players){
         emitTokenUpdate(player);
@@ -353,9 +363,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on("start-game", () => {
-        data.setCurrentCardFromCardList();
+        emitAllCardsRemaining();
         emitAllPlayersDeckSize();
         emitAllPlayersTokens();
+        data.setCurrentCardFromCardList();
         emitChangeAllToWagerScreen();
     });
 
@@ -413,6 +424,7 @@ io.on("connection", (socket) => {
             }
             emitChangeAllToLiquidateScreen();
             emitAllPlayersDeckSize();
+            emitAllCardsRemaining();
 
             const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
             updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
