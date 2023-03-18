@@ -581,7 +581,10 @@ io.on("connection", (socket) => {
 
     data.players[socket.id] = defaultPlayerData();
     data.numPlayers++;
-
+    /**
+     * Sets the name of the sender
+     * Currently unused
+     */
     socket.on("set-name", (name) => {
         if (typeof name !== "string"){
             return;
@@ -589,6 +592,9 @@ io.on("connection", (socket) => {
         data.players[socket.id].name = name;
     });
 
+    /**
+     * Starts the game by sending players relevant information, setting the currentCard, and telling all players to go to wager screen
+     */
     socket.on("start-game", () => {
         emitAllCardsRemaining();
         emitAllPlayersDeckSize();
@@ -597,6 +603,9 @@ io.on("connection", (socket) => {
         emitChangeAllToWagerScreen();
     });
 
+    /**
+     * Let a player place their wager, and see if all players have wagered
+     */
     socket.on("place-wager", (tokensWagered) => {
         const playerData = data.players[socket.id];
 
@@ -622,8 +631,7 @@ io.on("connection", (socket) => {
         data.setPlayerStatus(socket.id, "wagered", true);
 
         const allWagered = checkIfAllPlayersWagered();
-        //console.log(data);
-        //console.log(allWagered);
+  
         if (allWagered){
             const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
             const winningPlayers         = data.getPlayersWithHighestWager();
@@ -662,6 +670,9 @@ io.on("connection", (socket) => {
         
     });
 
+    /**
+     * Let a player liquidate their selected cards, and check if all players have liquidated
+     */
     socket.on("liquidate-cards", (cardsToLiquidate) => {
         const playerData = data.players[socket.id];
         const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
@@ -712,10 +723,16 @@ io.on("connection", (socket) => {
         emitChangeAllToEndScreen();
     });
 
+    /**
+     * Give the player the ydkFile based on their cards array
+     */
     socket.on("download", () => {
         io.to(socket.id).emit("download", data.getPlayerYDKFile(socket.id));
     });
 
+    /**
+     * Let player updated whether they're ready or not
+     */
     socket.on("update-readied-status", (status) => {
         data.setPlayerStatus(socket.id, "readied", status);
         emitAllPlayersStatus("readied");
