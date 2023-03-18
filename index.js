@@ -374,18 +374,29 @@ function emitChangeAllToWagerScreen(){
     emitWagerCard();
 }
 
+/**
+ * Tell all players to change their screen to the liquidate screen
+ */
 function emitChangeAllToLiquidateScreen(){
     for (const player in data.players){
         emitChangeToLiquidateScreen(player);
     }
 }
 
+/**
+ * Tell all players to change their screen to the end screen
+ */
 function emitChangeAllToEndScreen(){
     for (const player in data.players){
         emitChangeToEndScreen(player);
     }
 }
 
+/**
+ * Generate a player's deck by grabbing the id of each card in their cards array, and send it to them
+ * TODO: update so that a player gets not only the card ids, but also the wager they put in for each card
+ * @param {string} player socket.id of player
+ */
 function emitDeck(player){
     const deck = [];
     for (const card of data.players[player].cards){
@@ -394,48 +405,85 @@ function emitDeck(player){
     io.to(player).emit("deck", deck);
 }
 
+/**
+ * Send a player the card that they just earned
+ * @param {string} player socket.id of player
+ */
 function emitCardAdded(player){
     io.to(player).emit("card-added", data.currentCard);
 }
 
+/**
+ * Tell a player to change to the wager screen
+ * @param {string} player socket.id of the player
+ */
 function emitChangeToWagerScreen(player){
     io.to(player).emit("change-to-wager-screen");
 }
 
+/**
+ * Tell a player to change to the liquidate screen
+ * @param {string} player socket.id of the player
+ */
 function emitChangeToLiquidateScreen(player){
     io.to(player).emit("change-to-liquidate-screen");
 }
 
+/**
+ * Tell a player to change to the end screen
+ * @param {string} player socket.id of the player
+ */
 function emitChangeToEndScreen(player){
     io.to(player).emit("change-to-end-screen");
 }
 
+/**
+ * Tell all players to display their end buttons
+ */
 function emitShowAllEndButtons(){
     for (const player in data.players){
         io.to(player).emit("show-end-button");
     }
 }
 
+/**
+ * Tell all players to hide their end buttons
+ */
 function emitHideAllEndButtons(){
     for (const player in data.players){
         io.to(player).emit("hide-end-button");
     }
 }
 
+/**
+ * Tell player that the wager they submitted is not a number
+ * @param {string} player socket.id of player with a non-number wager
+ */
 function emitNonNumberWager(player){
     io.to(player).emit("non-number-wager");
 }
 
+/**
+ * Tell a player their token amount
+ * @param {string} player socket.id of player to tell
+ */
 function emitTokenUpdate(player){
     io.to(player).emit("token-update", data.players[player].tokens);
 }
 
+/**
+ * Tell all players the new wager card
+ */
 function emitWagerCard(){
     for (const player in data.players){
         io.to(player).emit("wager-card", data.currentCard)
     }
 }
 
+/**
+ * Tell all players what each players property status is
+ * @param {string} property name of the property to get
+ */
 function emitAllPlayersStatus(property){
     const playerStatuses = data.getAllPlayersStatus(property);
     const statusName = "update-" + property + "-statuses";
@@ -443,6 +491,9 @@ function emitAllPlayersStatus(property){
     //console.log(playerStatuses);
 }
 
+/**
+ * Tell all players how many cards remain
+ */
 function emitAllCardsRemaining(){
     const cardsRemaining = data.getCardsRemaining();
     for (const player in data.players){
@@ -450,18 +501,30 @@ function emitAllCardsRemaining(){
     }
 }
 
+/**
+ * Tell all players how many tokens they have
+ */
 function emitAllPlayersTokens(){
     for (const player in data.players){
         emitTokenUpdate(player);
     }
 }
 
+/**
+ * Tell all players how big their deck is
+ */
 function emitAllPlayersDeckSize(){
     for (const player in data.players){
         io.to(player).emit("deck-size-update", data.players[player].cards.length);
     }
 }
 
+/**
+ * Remove the given card for the given player, and return its value
+ * @param {string} player socket.id of player
+ * @param {string} cardId card id to remove from player.cards
+ * @returns the value of the removed card, or null if that card is not present
+ */
 function liquidateCard(player, cardId){
     const playerData = data.players[player];
     let counter = 0;
@@ -476,6 +539,11 @@ function liquidateCard(player, cardId){
     return null;
 }
 
+/**
+ * Determines if end buttons need to be changed to hidden/shown, or stay the same. They need to change if before != after
+ * @param {boolean} before whether buttons should have been shown before making a card change
+ * @param {boolean} after whether buttons should have been shown after making a card change
+ */
 function updateEndButtonsBasedOnCardChange(before, after){
     if (before !== after){
         if (after){
@@ -486,8 +554,11 @@ function updateEndButtonsBasedOnCardChange(before, after){
     }
 }
 
-
-
+/**
+ * Whether a string could be converted to a number or not
+ * @param {string} stringToCheck string being checked
+ * @returns {boolean} string can be converted to a number
+ */
 function isNumeric(stringToCheck){
     if (typeof stringToCheck !== "string") return false;
     return !isNaN(stringToCheck) &&
