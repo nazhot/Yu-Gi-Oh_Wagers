@@ -23,6 +23,24 @@ app.get("/wager/", (req, res) => {
  * {object} currentWagers properties are the socket ids of the players that have wagered already, value is how many tokens they wagered up
  * {array}  cardList      needs to be implemented, will be the list of card ids available for auction
  * 
+ * Functions
+ * addCardToPlayer(player)                   places currentCard within the speficied player's cards
+ * getPlayerYDKFile(player)                  generate and return the ydkFile for the specified player
+ * setCurrentCardFromCardList()              pops cardList in order to set currentCard
+ * getCardsRemaining()                       returns the number of remaining cards in cardList
+ * setPlayerStatus(player, property, status) set a certain player's status to the specified value
+ * resetStatuses(property)                   sets all players' specified property back to false
+ * resetRequestedEnd()                       sets all players' requestedEnd property back to false
+ * resetWagered()                            sets all players' wagered property back to false
+ * resetLiquidated()                         sets all players' liquidated property back to false
+ * resetReadied()                            sets all players' readied property back to false
+ * getAllPlayersStatus(property)             returns an object of {player: property-value} for all of the specified property
+ * getAllPlayersAtLeastXCards(numCard)       whether all players currently have at least X cards
+ * resetAllPlayersStatuses()                 sets all statuses of all players back to false
+ * getNumRemainingCards()                    returns the length of the cardList property
+ * getPlayersWithHighestWager()              return an array of player(s) that have the highest wager for a round
+ * getLowestWager()                          returns the lowest wager of the round
+ * getPlayersWithLeastTieWins()              returns an array of player(s) that have the lowest numTies property
  */
 const data = {
     numPlayers: 0,
