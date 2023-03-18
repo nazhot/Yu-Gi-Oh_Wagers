@@ -370,8 +370,8 @@ function emitWagerPlaced(player, playerName, tokensRemaining){
 function emitChangeAllToWagerScreen(){
     for (const player in data.players){
         emitChangeToWagerScreen(player);
-        emitWagerCard();
     }
+    emitWagerCard();
 }
 
 function emitChangeAllToLiquidateScreen(){
