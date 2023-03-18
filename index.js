@@ -262,6 +262,10 @@ const cardList = fs.readFileSync("public/cardLists/Draft Masters", "utf-8").spli
 shuffleArray(cardList);
 data.cardList = cardList;
 
+/**
+ * Shuffles an array using Fisher-Yates (aka Knuth) Shuffle
+ * @param {array} array array to be shuffled
+ */
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -300,36 +304,69 @@ function checkIfAllPropertiesTrue(propertyName){
     return true;
 }
 
+/**
+ * Reset the card list in data by shuffling the global card list, and setting data.cardList equal to it
+ */
 function resetCardList(){
     shuffleArray(cardList);
     data.cardList = cardList;
 }
 
+/**
+ * Checks if all players have wagered
+ * @returns whether all players have wagered
+ */
 function checkIfAllPlayersWagered(){
     return checkIfAllPropertiesTrue("wagered");
 }
 
+/**
+ * Checks if all players have liquidated
+ * @returns whether all players have liquidated
+ */
 function checkIfAllPlayersLiquidated(){
     return checkIfAllPropertiesTrue("liquidated");
 }
 
+/**
+ * Checks if all players have requested to end the game
+ * @returns whether all players have requestedEnd
+ */
 function checkIfAllPlayersRequestedEnd(){
     return checkIfAllPropertiesTrue("requestedEnd");
 }
 
+/**
+ * Tell a player that they have insufficient tokens for the given wager
+ * @param {string} player socket.id of player
+ */
 function emitInsufficientTokens(player){
     io.to(player).emit("insufficient-tokens")
 }
 
+/**
+ * Tell a player that they tried to liquidate a card that doesn't appear in their player.cards array
+ * @param {string} player socket.id of player
+ * @param {string} card   cardId that player attempted to remove
+ */
 function emitInvalidLiquidation(player, card){
     io.to(player).emit("invalid-liquidation", card);
 }
 
+/**
+ * Tell a player that they placed a wager to update their tokens, and let all players know that a wager happened
+ * @param {string} player          socket.id of player that placed the wager
+ * @param {string} playerName      name of the player that placed the wager, currently not used by client
+ * @param {number} tokensRemaining 
+ */
 function emitWagerPlaced(player, playerName, tokensRemaining){
     io.to(player).emit("self-wager-placed", tokensRemaining);
     io.emit("wager-placed", playerName);
 }
 
+/**
+ * Tell all players to change their screen to the wager screen, and tell them the card being wagered
+ */
 function emitChangeAllToWagerScreen(){
     for (const player in data.players){
         emitChangeToWagerScreen(player);
