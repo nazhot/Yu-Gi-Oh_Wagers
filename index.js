@@ -28,7 +28,7 @@ app.get("/wager/", (req, res) => {
  * getPlayerYDKFile(player)                  generate and return the ydkFile for the specified player
  * setCurrentCardFromCardList()              pops cardList in order to set currentCard
  * getCardsRemaining()                       returns the number of remaining cards in cardList
- * setPlayerStatus(player, property, status) set a certain player's status to the specified value
+ * setPlayerStatus(player, property, status) sets a certain player's status to the specified value
  * resetStatuses(property)                   sets all players' specified property back to false
  * resetRequestedEnd()                       sets all players' requestedEnd property back to false
  * resetWagered()                            sets all players' wagered property back to false
@@ -48,6 +48,15 @@ const data = {
     currentCard: "",
     currentWagers: {},
     cardList: [],
+    /**
+     * Places currentCard within the speficied player's cards. Objects in players.cards take the form:
+     * {
+     *  id    {string} the card id
+     *  wager {number} the wager the player submitted
+     *  value {number} the lowest wager of the round
+     * }
+     * @param {string} player socket.id of the player
+     */
     addCardToPlayer(player){
         this.players[player].cards.push({
             id:  this.currentCard,
@@ -55,6 +64,12 @@ const data = {
             value: this.getLowestWager(),
         })
     },
+
+    /**
+     * Generate and return the ydkFile for the specified player
+     * @param {string} player socket.id of the player 
+     * @returns {string} the text needed for a ydkFile based on the player's cards
+     */
     getPlayerYDKFile(player){
         let ydkFile = "#main";
         for (const cardIndex in this.players[player].cards){
@@ -64,32 +79,78 @@ const data = {
 
         return ydkFile;
     },
+
+    /**
+     * Pops cardList in order to set currentCard
+     */
     setCurrentCardFromCardList(){
         this.currentCard = cardList.pop();
     },
+
+    /**
+     * Returns the number of remaining cards in cardList
+     * @returns {number} the number of remaining cards, which is the length of cardList
+     */
     getCardsRemaining(){
         return this.cardList.length;
     },
+
+    /**
+     * Sets a certain player's status to the specified value
+     * @param {string}  player   socket.id of player 
+     * @param {string}  property name of the property to set 
+     * @param {boolean} status   value to set the property to
+     */
     setPlayerStatus(player, property, status){
         this.players[player][property] = status;
     },
+
+    /**
+     * Sets all players' specified property back to false
+     * @param {string} property name of the property to reset
+     */
     resetStatuses(property){
         for (const player in this.players){
             this.players[player][property] = false;
         }
     },
+
+    /**
+     * Sets all players' requestedEnd property back to false
+     */
     resetRequestedEnd(){
         this.resetStatuses("requestedEnd");
     },
+
+    /**
+     * Sets all players' wagered property back to false
+     */
     resetWagered(){
         this.resetStatuses("wagered");
     },
+
+    /**
+     * Sets all players' liquidated property back to false
+     */
     resetLiquidated(){
         this.resetStatuses("liquidated");
     },
+
+    /**
+     * Sets all players' readied property back to false
+     */
     resetReadied(){
         this.resetStatuses("readied");
     },
+
+    /**
+     * Returns an object of {player: property-value} for all of the specified property
+     * @param {string} property name of the property to get the values of
+     * @returns {object} contains the values of each player's property, in the form:
+     *                   {
+     *                      player: property-status
+     *                   }
+     */
     getAllPlayersStatus(property){
         const returnData = {};
         for (const player in this.players){
@@ -97,6 +158,12 @@ const data = {
         }
         return returnData;
     },
+
+    /**
+     * Whether all players currently have at least X cards
+     * @param {number} numCards number of cards to check if players' have
+     * @returns {boolean} if all players have at least X cards
+     */
     getAllPlayersAtLeastXCards(numCards){
         for (const player in this.players){
             if(this.players[player].cards.length < numCards){
@@ -105,6 +172,10 @@ const data = {
         }
         return true;
     },
+
+    /**
+     * Sets all statuses of all players back to false
+     */
     resetAllPlayersStatuses(){
         for (const player in this.players){
             this.resetLiquidated();
@@ -113,9 +184,23 @@ const data = {
             this.resetRequestedEnd();
         }
     },
+
+    /**
+     * Get the number of cards remaining in cardList
+     * @returns {number} the length of the cardList property
+     */
     getNumRemainingCards(){
         return this.cardList.length;
     },
+
+    /**
+     * Compiles the player(s) with the highest wager
+     * -Start with the highest wager of -1
+     * -Go through all of the players' wagers
+     * -If a player's wager is equal to the highest wager, add the player to the array
+     * -If a player's wager is lower than the highest wager, set highest wager to that wager, empty the array, and add the player
+     * @returns {array} player(s) that have the highest wager for a round
+     */
     getPlayersWithHighestWager() {
         let highestWager   = -1;
         let highestPlayers = [];
@@ -131,6 +216,11 @@ const data = {
         }
         return highestPlayers;
     },
+
+    /**
+     * Get the lowest wager of the round
+     * @returns {number} lowest wager of the round
+     */
     getLowestWager() {
         let lowestWager = Infinity;
         for (const player in this.currentWagers){
@@ -139,6 +229,15 @@ const data = {
         }
         return lowestWager;
     },
+
+    /**
+     * Get an array of player(s) that have the lowest numTies property
+     * -Start with the lowest ties of 100
+     * -Go through all of the players' numTies
+     * -If a player's numTies is equal to the lowest ties, add the player to the array
+     * -If a player's numTies is lower than the lowest ties, set lowest ties to that value, empty the array, and add the player
+     * @returns {array} player(s) that have the lowest number of ties so far in the game
+     */
     getPlayersWithLeastTieWins() {
         let lowestTieWins = 100;
         let lowestPlayers = [];
