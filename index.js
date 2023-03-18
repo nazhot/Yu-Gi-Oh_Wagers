@@ -76,6 +76,8 @@ const data = {
             const cardId = this.players[player].cards[cardIndex].id;
             ydkFile += "\n" + cardId;
         }
+        ydkFile += "\n#extra";
+        ydkFile += "\n!side";
 
         return ydkFile;
     },
