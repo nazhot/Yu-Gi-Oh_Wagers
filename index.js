@@ -135,6 +135,7 @@ const data = {
      * Sets all players' liquidated property back to false
      */
     resetLiquidated(){
+        this.resetStatuses("liquidatedAtLeastOneCard");
         this.resetStatuses("liquidated");
     },
 
@@ -284,6 +285,7 @@ function defaultPlayerData(){
         cards: [], //format should be {card number, price you paid, price opponent paid}
         wagered: false,
         liquidated: false,
+        liquidatedAtLeastOneCard: false,
         readied: false,
         requestedEnd: false,
         tieWins: 0,
@@ -617,12 +619,15 @@ function allWageredActions(){
  * -Tell everyone to change to wager screen
  */
 function allLiquidatedActions(){
-    data.resetAllPlayersStatuses();
     for (const player in data.players){
+        if (!data.players[player].liquidatedAtLeastOneCard){
+            continue;
+        }
         emitDeck(player);
+        emitDeckSize(player);
         emitTokenUpdate(player);
     }
-    emitAllPlayersDeckSize();
+    data.resetAllPlayersStatuses();
     emitChangeAllToWagerScreen();
 }
 
@@ -718,15 +723,17 @@ io.on("connection", (socket) => {
     socket.on("liquidate-cards", (cardsToLiquidate) => {
         const playerData = data.players[socket.id];
         const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
+        let liquidatedAtLeastOneCard = false;
         for (const card of cardsToLiquidate){
             const tokensToAdd = liquidateCard(socket.id, card);
             if (tokensToAdd == null){
                 emitInvalidLiquidation(socket.id, card);
                 continue;
             }
+            liquidatedAtLeastOneCard = true;
             playerData.tokens += tokensToAdd;
         }
-
+        playerData.liquidatedAtLeastOneCard = liquidatedAtLeastOneCard;
         const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
 
         updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
@@ -737,7 +744,6 @@ io.on("connection", (socket) => {
         if (allLiquidated){
             allLiquidatedActions();
         }
-        //console.log(allLiquidated);
     });
 
     /**
