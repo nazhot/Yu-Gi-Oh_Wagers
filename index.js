@@ -592,10 +592,9 @@ function allWageredActions(){
 
     data.resetAllPlayersStatuses();
     data.addCardToPlayer(winningPlayer);
-    data.currentWagers = {};
-
     emitCurrentCardAdded(winningPlayer);
-
+    data.currentWagers = {};
+    
     if (data.getCardsRemaining() === 0){
         emitChangeAllToEndScreen();
         return;

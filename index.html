@@ -31,6 +31,8 @@
       <div class="large-card-container">
         <p>Hovered Card</p>
         <img class="large-card" src="public/images/back.png">
+        <p>Your Wager</p>
+        <p class="previous-wager"></p>
       </div>
 
       <div class="bottom-nav-container">
@@ -62,6 +64,8 @@
       <div class="large-card-container">
         <p>Hovered Card</p>
         <img class="large-card" src="public/images/back.png">
+        <p>Your Wager</p>
+        <p class="previous-wager"></p>
       </div>
       <div class="bottom-nav-container">
         <div class="player-information-container">
@@ -223,17 +227,24 @@
        * Create the standard cardElement that's used throughout the program
        * @param {string} cardId id of the card
        */
-      function generateCardElement(cardId){
+      function generateCardElement(cardObject){
+        const cardId = cardObject.id;
+        const cardWager = cardObject.wager;
         const card = document.createElement("img");
         card.classList.add("deck-card")
         card.src = smallCardImageUrl + cardId + ".jpg";
         card.cardId = cardId;
+        card.wager  = cardWager;
+        console.log(card.wager);
         card.largeImage = largeCardImageUrl + cardId + ".jpg";
         card.onmouseover = () => {
-          const largeCardElements = document.getElementsByClassName("large-card");
+          const largeCardElements     = document.getElementsByClassName("large-card");
+          const previousWagerElements = document.getElementsByClassName("previous-wager");
+
           for (const largeCardElement of largeCardElements){
             largeCardElement.src = card.largeImage;
           }
+          setInfoPanes("previous-wager", card.wager);
         };
 
         card.onmouseleave = () => {
@@ -241,6 +252,7 @@
           for (const largeCardElement of largeCardElements){
             largeCardElement.src = cardBackImage;
           }
+          setInfoPanes("previous-wager", "");
         };
 
         card.onclick = () => {
@@ -258,11 +270,11 @@
        *   the game, and every time a card is added generateCardElement should be called to make it
        * @param {string} cardId id of the card to add
        */
-      function addCard(cardId){
+      function addCard(cardObject){
         const deckElements = document.getElementsByClassName("deck");
 
         for (const deckElement of deckElements){
-          const cardElement = generateCardElement(cardId); //for each deck element, a new cardElement must be generated. Learned the hard way
+          const cardElement = generateCardElement(cardObject); //for each deck element, a new cardElement must be generated. Learned the hard way
           deckElement.appendChild(cardElement);
         }
       }
@@ -273,9 +285,9 @@
        */
       function setDeck(cardList){
         const deckElements = clearDeck();
-        for (const cardId of cardList){
+        for (const cardObject of cardList){
           for (const deckElement of deckElements){
-            const cardElement = generateCardElement(cardId); //new card element must be generated for every new element it's being added to
+            const cardElement = generateCardElement(cardObject); //new card element must be generated for every new element it's being added to
             deckElement.appendChild(cardElement);
           }
         }   
@@ -377,8 +389,8 @@
         showPlayer1Elements();
       });
 
-      socket.on("card-added", (cardId) => {
-        addCard(cardId);
+      socket.on("card-added", (cardObject) => {
+        addCard(cardObject);
       });
 
       socket.on("deck", (cardList) => {
