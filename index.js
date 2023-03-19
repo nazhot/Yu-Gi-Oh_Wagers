@@ -29,11 +29,6 @@ app.get("/wager/", (req, res) => {
  * setCurrentCardFromCardList()              pops cardList in order to set currentCard
  * getCardsRemaining()                       returns the number of remaining cards in cardList
  * setPlayerStatus(player, property, status) sets a certain player's status to the specified value
- * resetStatuses(property)                   sets all players' specified property back to false
- * resetRequestedEnd()                       sets all players' requestedEnd property back to false
- * resetWagered()                            sets all players' wagered property back to false
- * resetLiquidated()                         sets all players' liquidated property back to false
- * resetReadied()                            sets all players' readied property back to false
  * getAllPlayersStatus(property)             returns an object of {player: property-value} for all of the specified property
  * getAllPlayersAtLeastXCards(numCard)       whether all players currently have at least X cards
  * resetAllPlayersStatuses()                 sets all statuses of all players back to false
@@ -98,54 +93,62 @@ const data = {
     },
 
     /**
+     * Check if a given property exists for that player
+     * @param {string} player socket.id of player to check
+     * @returns {boolean} given property exists
+     */
+    playerPropertyExists(player, property){
+        return this.players[player].statuses.hasOwnProperty(property);
+    },
+
+    /**
      * Sets a certain player's status to the specified value
      * @param {string}  player   socket.id of player 
      * @param {string}  property name of the property to set 
      * @param {boolean} status   value to set the property to
      */
     setPlayerStatus(player, property, status){
+        if (!this.playerPropertyExists(player, property)){
+            console.log("%s is not a status that players have, and you are trying to set it", property);
+            return;
+        }
         this.players[player].statuses[property] = status;
     },
 
     /**
-     * Sets all players' specified property back to false
-     * @param {string} property name of the property to reset
+     * Set every player's given property to false
+     * @param {string} property property to set
+     * @param {boolean} status  value to set that property to
      */
-    resetStatuses(property){
+    setAllPlayersStatus(property, status){
         for (const player in this.players){
-            this.setPlayerStatus(player, property, false);
+            this.setPlayerStatus(player, property, status);
         }
     },
 
     /**
-     * Sets all players' requestedEnd property back to false
+     * Sets all statuses of all players back to false
      */
-    resetRequestedEnd(){
-        this.resetStatuses("requestedEnd");
+    resetAllPlayersStatuses(){
+        for (const player in this.players){
+            this.players[player].statuses = defaultPlayerStatuses();
+        }
     },
 
     /**
-     * Sets all players' wagered property back to false
+     * Get the specified property for the specified player
+     * @param {string} player   socket.id of player to check
+     * @param {string} property property to check
+     * @returns {boolean} status of that player's property
      */
-    resetWagered(){
-        this.resetStatuses("wagered");
+    getPlayerStatus(player, property){
+        if (!this.playerPropertyExists(player, property)){
+            console.log("%s is not a status that players have, and you are trying to get it", property);
+            return;
+        }
+        return this.players[player].statuses[property];
     },
-
-    /**
-     * Sets all players' liquidated property back to false
-     */
-    resetLiquidated(){
-        this.resetStatuses("liquidatedAtLeastOneCard");
-        this.resetStatuses("liquidated");
-    },
-
-    /**
-     * Sets all players' readied property back to false
-     */
-    resetReadied(){
-        this.resetStatuses("readied");
-    },
-
+    
     /**
      * Returns an object of {player: property-value} for all of the specified property
      * @param {string} property name of the property to get the values of
@@ -157,7 +160,7 @@ const data = {
     getAllPlayersStatus(property){
         const returnData = {};
         for (const player in this.players){
-            returnData[player] = this.players[player].statuses[property];
+            returnData[player] = this.getPlayerStatus(player, property);
         }
         return returnData;
     },
@@ -174,15 +177,6 @@ const data = {
             }
         }
         return true;
-    },
-
-    /**
-     * Sets all statuses of all players back to false
-     */
-    resetAllPlayersStatuses(){
-        for (const player in this.players){
-            this.players[player].statuses = defaultPlayerStatuses();
-        }
     },
 
     /**
@@ -253,7 +247,7 @@ const data = {
             }
         }
         return lowestPlayers;
-    }
+    },
 };
 
 const cardList = fs.readFileSync("public/cardLists/Draft Masters", "utf-8").split("\n");
@@ -302,7 +296,7 @@ function defaultPlayerStatuses(){
  */
 function checkIfAllPropertiesTrue(propertyName){
     for (const player in data.players){
-        if (!data.players[player].statuses[propertyName]){
+        if (!data.getPlayerStatus(player, propertyName)){
             return false;
         }
     }
@@ -615,15 +609,14 @@ function allWageredActions(){
 /**
  * Actions to take when all players have finally liquidated
  * -Reset all players statuses
- * -Emit decks to all players //TODO: update so it is only happening when a player liquidates
- *                            //TODO: look into maybe immediately updating the decks rather than waiting for everyone?
+ * -Emit decks to all players 
  * -Emit token updates to everyone //TODO: only do if number changes
  * -Emit everyone's deck sizes
  * -Tell everyone to change to wager screen
  */
 function allLiquidatedActions(){
     for (const player in data.players){
-        if (!data.players[player].statuses.liquidatedAtLeastOneCard){
+        if (!data.getPlayerStatus(player, "liquidatedAtLeastOneCard")){
             continue;
         }
         emitDeck(player);
@@ -736,12 +729,12 @@ io.on("connection", (socket) => {
             liquidatedAtLeastOneCard = true;
             playerData.tokens += tokensToAdd;
         }
-        playerData.statuses.liquidatedAtLeastOneCard = liquidatedAtLeastOneCard;
+        data.setPlayerStatus(socket.id, "liquidatedAtLeastOneCard", liquidatedAtLeastOneCard);
+        data.setPlayerStatus(socket.id, "liquidated", true);
+
         const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
 
         updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
-
-        playerData.statuses.liquidated = true;
 
         const allLiquidated = checkIfAllPlayersLiquidated();
         if (allLiquidated){
