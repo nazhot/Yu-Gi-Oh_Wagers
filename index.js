@@ -555,6 +555,49 @@ function updateEndButtonsBasedOnCardChange(before, after){
 }
 
 /**
+ * Actions to take when all players have finally wagered
+ * -Get the winning player(s)
+ * -Grab the winner if there are multiple (based on lowest number of ties)
+ * -Add the current card to winning-play.cards
+ * -Emit card added to the winner
+ * -Reset data.currentWagers
+ * -Reset all players statuses
+ * -Emit deck to winner
+ */
+function allWageredActions(){
+    const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
+    const winningPlayers         = data.getPlayersWithHighestWager();
+    const numWinningPlayers      = winningPlayers.length;
+    const lowestWager            = data.getLowestWager();
+    let   winningPlayer          = null;
+
+    if (numWinningPlayers > 1){
+        const elligiblePlayers = data.getPlayersWithLeastTieWins();
+              winningPlayer    = elligiblePlayers[Math.floor(Math.random()*elligiblePlayers.length)];
+              data.players[winningPlayer].tieWins++;
+    } else {
+        winningPlayer = winningPlayers[0];
+    }
+
+    data.addCardToPlayer(winningPlayer);
+    emitCardAdded(winningPlayer);
+    data.currentWagers = {};
+    data.resetAllPlayersStatuses();
+    emitDeck(winningPlayer);
+    if (data.getCardsRemaining() === 0){
+        emitChangeAllToEndScreen();
+        return;
+    }
+    emitChangeAllToLiquidateScreen();
+    emitAllPlayersDeckSize();
+    emitAllCardsRemaining();
+
+    const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
+    updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
+    data.setCurrentCardFromCardList();
+}
+
+/**
  * Whether a string could be converted to a number or not
  * @param {string} stringToCheck string being checked
  * @returns {boolean} string can be converted to a number
@@ -630,43 +673,13 @@ io.on("connection", (socket) => {
 
         data.setPlayerStatus(socket.id, "wagered", true);
 
+        emitWagerPlaced(socket.id, playerData.name, playerData.tokens);
+
         const allWagered = checkIfAllPlayersWagered();
   
         if (allWagered){
-            const beforeAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
-            const winningPlayers         = data.getPlayersWithHighestWager();
-            const numWinningPlayers      = winningPlayers.length;
-            const lowestWager            = data.getLowestWager();
-            let   winningPlayer          = null;
-
-            if (numWinningPlayers > 1){
-                const elligiblePlayers = data.getPlayersWithLeastTieWins();
-                      winningPlayer    = elligiblePlayers[Math.floor(Math.random()*elligiblePlayers.length)];
-                      data.players[winningPlayer].tieWins++;
-            } else {
-                winningPlayer = winningPlayers[0];
-            }
-
-            data.addCardToPlayer(winningPlayer);
-            emitCardAdded(winningPlayer);
-            data.currentWagers = {};
-            data.resetAllPlayersStatuses();
-            //console.log(data);
-            emitDeck(winningPlayer);
-            if (data.getCardsRemaining() === 0){
-                emitChangeAllToEndScreen();
-                return;
-            }
-            emitChangeAllToLiquidateScreen();
-            emitAllPlayersDeckSize();
-            emitAllCardsRemaining();
-
-            const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
-            updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
-            data.setCurrentCardFromCardList();
+            allWageredActions();
         }
-
-        emitWagerPlaced(socket.id, playerData.name, playerData.tokens);
         
     });
 
