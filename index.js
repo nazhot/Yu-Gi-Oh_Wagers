@@ -403,7 +403,7 @@ function emitChangeAllToEndScreen(){
 function emitDeck(player){
     const deck = [];
     for (const card of data.players[player].cards){
-        deck.push(card.id);
+        deck.push({id: card.id, wager: card.wager});
     }
     io.to(player).emit("deck", deck);
 }
@@ -412,8 +412,8 @@ function emitDeck(player){
  * Send a player the card that they just earned
  * @param {string} player socket.id of player
  */
-function emitCardAdded(player){
-    io.to(player).emit("card-added", data.currentCard);
+function emitCurrentCardAdded(player){
+    io.to(player).emit("card-added", {id: data.currentCard, wager: data.currentWagers[player]});
 }
 
 /**
@@ -594,7 +594,7 @@ function allWageredActions(){
     data.addCardToPlayer(winningPlayer);
     data.currentWagers = {};
 
-    emitCardAdded(winningPlayer);
+    emitCurrentCardAdded(winningPlayer);
 
     if (data.getCardsRemaining() === 0){
         emitChangeAllToEndScreen();
