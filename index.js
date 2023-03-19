@@ -494,7 +494,7 @@ function emitAllPlayersStatus(property){
 /**
  * Tell all players how many cards remain
  */
-function emitAllCardsRemaining(){
+function emitAllPlayersCardsRemaining(){
     const cardsRemaining = data.getCardsRemaining();
     for (const player in data.players){
         io.to(player).emit("cards-remaining-update", cardsRemaining);
@@ -515,8 +515,16 @@ function emitAllPlayersTokens(){
  */
 function emitAllPlayersDeckSize(){
     for (const player in data.players){
-        io.to(player).emit("deck-size-update", data.players[player].cards.length);
+        emitDeckSize(player);
     }
+}
+
+/**
+ * Tell a player how big their deck is
+ * @param {*} player 
+ */
+function emitDeckSize(player){
+    io.to(player).emit("deck-size-update", data.players[player].cards.length);
 }
 
 /**
@@ -579,22 +587,24 @@ function allWageredActions(){
         winningPlayer = winningPlayers[0];
     }
 
-    data.addCardToPlayer(winningPlayer);
-    emitCardAdded(winningPlayer);
-    data.currentWagers = {};
     data.resetAllPlayersStatuses();
-    emitDeck(winningPlayer);
+    data.addCardToPlayer(winningPlayer);
+    data.currentWagers = {};
+
+    emitCardAdded(winningPlayer);
+
     if (data.getCardsRemaining() === 0){
         emitChangeAllToEndScreen();
         return;
     }
-    emitChangeAllToLiquidateScreen();
-    emitAllPlayersDeckSize();
-    emitAllCardsRemaining();
+
+    emitDeckSize(winningPlayer);
+    emitAllPlayersCardsRemaining();
 
     const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
     updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
     data.setCurrentCardFromCardList();
+    emitChangeAllToLiquidateScreen();
 }
 
 /**
@@ -658,7 +668,7 @@ io.on("connection", (socket) => {
      * Starts the game by sending players relevant information, setting the currentCard, and telling all players to go to wager screen
      */
     socket.on("start-game", () => {
-        emitAllCardsRemaining();
+        emitAllPlayersCardsRemaining();
         emitAllPlayersDeckSize();
         emitAllPlayersTokens();
         data.setCurrentCardFromCardList();

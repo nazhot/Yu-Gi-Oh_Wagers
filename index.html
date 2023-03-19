@@ -303,6 +303,7 @@
       });
 
       socket.on("token-update", (tokensRemaining) => {
+        console.log("updating token count");
         setTokenCount(tokensRemaining);
       });
 
@@ -377,7 +378,7 @@
       });
 
       socket.on("card-added", (cardId) => {
-        //addCard(cardId);
+        addCard(cardId);
       });
 
       socket.on("deck", (cardList) => {
