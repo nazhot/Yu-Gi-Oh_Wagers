@@ -104,7 +104,7 @@ const data = {
      * @param {boolean} status   value to set the property to
      */
     setPlayerStatus(player, property, status){
-        this.players[player][property] = status;
+        this.players[player].statuses[property] = status;
     },
 
     /**
@@ -113,7 +113,7 @@ const data = {
      */
     resetStatuses(property){
         for (const player in this.players){
-            this.players[player][property] = false;
+            this.setPlayerStatus(player, property, false);
         }
     },
 
@@ -157,7 +157,7 @@ const data = {
     getAllPlayersStatus(property){
         const returnData = {};
         for (const player in this.players){
-            returnData[player] = this.players[player][property];
+            returnData[player] = this.players[player].statuses[property];
         }
         return returnData;
     },
@@ -181,10 +181,7 @@ const data = {
      */
     resetAllPlayersStatuses(){
         for (const player in this.players){
-            this.resetLiquidated();
-            this.resetWagered();
-            this.resetReadied();
-            this.resetRequestedEnd();
+            this.players[player].statuses = defaultPlayerStatuses();
         }
     },
 
@@ -283,13 +280,19 @@ function defaultPlayerData(){
         name: "",
         tokens: 1000,
         cards: [], //format should be {card number, price you paid, price opponent paid}
+        tieWins: 0,
+        statuses: defaultPlayerStatuses(),
+    };
+}
+
+function defaultPlayerStatuses(){
+    return {
         wagered: false,
         liquidated: false,
         liquidatedAtLeastOneCard: false,
         readied: false,
         requestedEnd: false,
-        tieWins: 0,
-    };
+    }
 }
 
 /**
@@ -298,8 +301,8 @@ function defaultPlayerData(){
  * @returns {boolean} if all of the players have propertyName set to true
  */
 function checkIfAllPropertiesTrue(propertyName){
-    for (const prop in data.players){
-        if (!data.players[prop][propertyName]){
+    for (const player in data.players){
+        if (!data.players[player].statuses[propertyName]){
             return false;
         }
     }
@@ -620,7 +623,7 @@ function allWageredActions(){
  */
 function allLiquidatedActions(){
     for (const player in data.players){
-        if (!data.players[player].liquidatedAtLeastOneCard){
+        if (!data.players[player].statuses.liquidatedAtLeastOneCard){
             continue;
         }
         emitDeck(player);
@@ -733,12 +736,12 @@ io.on("connection", (socket) => {
             liquidatedAtLeastOneCard = true;
             playerData.tokens += tokensToAdd;
         }
-        playerData.liquidatedAtLeastOneCard = liquidatedAtLeastOneCard;
+        playerData.statuses.liquidatedAtLeastOneCard = liquidatedAtLeastOneCard;
         const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
 
         updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
 
-        playerData.liquidated = true;
+        playerData.statuses.liquidated = true;
 
         const allLiquidated = checkIfAllPlayersLiquidated();
         if (allLiquidated){
