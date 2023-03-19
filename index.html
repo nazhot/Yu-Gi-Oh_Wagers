@@ -219,7 +219,11 @@
         document.body.removeChild(element);
       }
 
-      function addCard(cardId, deckElement){
+      /**
+       * Create the standard cardElement that's used throughout the program
+       * @param {string} cardId id of the card
+       */
+      function generateCardElement(cardId){
         const card = document.createElement("img");
         card.classList.add("deck-card")
         card.src = smallCardImageUrl + cardId + ".jpg";
@@ -243,17 +247,38 @@
           toggleCardSelect(card);
         }
 
-        deckElement.appendChild(card);
+        return card;
       }
 
-      function setDeck(cardList){
+      /**
+       * Generates a standard card element from cardId, and adds it to all deck elements
+       * Used when just one card is being added, NOT when a whole deck is being added one at a time
+       * (deckElements would be created every time, setDeck can just create it once and pass elements to addCardToDeckElement)
+       * Decided to have this function take in a cardId, rather than a card element, since cardElement should be standard across
+       *   the game, and every time a card is added generateCardElement should be called to make it
+       * @param {string} cardId id of the card to add
+       */
+      function addCard(cardId){
         const deckElements = document.getElementsByClassName("deck");
-        clearDeck();
+
         for (const deckElement of deckElements){
-          for (const card of cardList){
-            addCard(card, deckElement);
+          const cardElement = generateCardElement(cardId); //for each deck element, a new cardElement must be generated. Learned the hard way
+          deckElement.appendChild(cardElement);
+        }
+      }
+
+      /**
+       * Add all of the standard card elements to the player's deckElements from the given cardList
+       * @param {array} cardList array of cardIds to be added
+       */
+      function setDeck(cardList){
+        const deckElements = clearDeck();
+        for (const cardId of cardList){
+          for (const deckElement of deckElements){
+            const cardElement = generateCardElement(cardId); //new card element must be generated for every new element it's being added to
+            deckElement.appendChild(cardElement);
           }
-        }        
+        }   
       }
 
       function submitStartGame(){
@@ -351,8 +376,8 @@
         showPlayer1Elements();
       });
 
-      socket.on("card-added", (card) => {
-
+      socket.on("card-added", (cardId) => {
+        //addCard(cardId);
       });
 
       socket.on("deck", (cardList) => {
