@@ -10,13 +10,13 @@
   </head>
   <body>
     <div id="home-page" class="screen-container">
-      <label for="token-count" class="player-1-element" style="display: none">Tokens</label>
-      <input type="number" name="token-count" id="token-count" class="player-1-element" style="display: none">
-      <button type="button" id="start-game-button" class="player-1-element" style="display: none" onclick="submitStartGame()">Start Game</button>
-      <p id="opponent-connected" style="display: none">Opponent Connected!</p>
+      <label for="token-count" class="player-1-element hidden">Tokens</label>
+      <input type="number" name="token-count" id="token-count" class="player-1-element hidden">
+      <button type="button" id="start-game-button" class="player-1-element hidden" onclick="submitStartGame()">Start Game</button>
+      <p id="opponent-connected" class="hidden">Opponent Connected!</p>
       <button type="button" id="player-ready-button" class="not-ready" onclick="swapReadyStatus(this)">NOT READY</button>
     </div>
-    <div id="wagering-page" class="screen-container" style="display:none">
+    <div id="wagering-page" class="screen-container hidden">
 
       <div id="shown-card-container">
         <p>Wagered Card</p>
@@ -46,7 +46,7 @@
           <span>Cards Remaining:</span>
           <span class="player-cards-remaining"></span>
         </div>
-        <button class="request-end" style="display: none" onclick="submitRequestEnd(this)">PLZ STOP</button>
+        <button class="request-end hidden" onclick="submitRequestEnd(this)">PLZ STOP</button>
         <div id="player-wager-options-container" class="submit-container">
           <label for="player-wager-amount">Wager:</label>
           <input type="number" name="player-wager-amount" id="player-wager-amount">
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div id="liquidating-page" style="display: none" class="screen-container">
+    <div id="liquidating-page"  class="screen-container hidden">
       <div id="liquidating-deck-container" class="deck-container">
         <div id="liquidating-deck" class="deck">
 
@@ -78,13 +78,13 @@
           <span>Cards Remaining:</span>
           <span class="player-cards-remaining"></span>
         </div>
-        <button class="request-end" style="display: none">PLZ STOP</button>
+        <button class="request-end hidden">PLZ STOP</button>
         <div id="player-liquidation-options-container" class="submit-container">
           <button id="liquidate-cards" onclick="submitLiquidate()">Liquidate Card(s)</button>
         </div>
       </div>
     </div>
-    <div id="end-page" style="display: none">
+    <div id="end-page" class="screen-container hidden">
       <button id="download-deck" onclick="submitDownload()">Download</button>
     </div>
     <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
@@ -135,6 +135,13 @@
         socket.emit("place-wager", wager);
       }
 
+      function resetDeckScroll(){
+        const deckElements = document.getElementsByClassName("deck-container");
+        for (const deckElement of deckElements){
+          deckElement.scrollTop = 0;
+        }
+      }
+
       function submitLiquidate(){
         const liquidateElements = document.getElementsByClassName("selected-card");
         const cardIdsToLiquidate = [];
@@ -144,10 +151,18 @@
         socket.emit("liquidate-cards", cardIdsToLiquidate);
       }
 
-      function hideAllScreens(){
-        const screens = document.getElementsByClassName("screen-container");
-        for (const screen of screens){
-          screen.style.display = "none";
+      function hideAllElementsByClassName(className){
+        const elements = document.getElementsByClassName(className);
+        for (const element of elements){
+          element.classList.remove("hidden");
+          element.classList.add("hidden");
+        }
+      }
+
+      function showAllElementsByClassName(className){
+        const elements = document.getElementsByClassName(className);
+        for (const element of elements){
+          element.classList.remove("hidden");
         }
       }
       
@@ -161,10 +176,11 @@
       function changeToScreen(screenName){
         const screen     = document.getElementById(screenName);
         
-        hideAllScreens();
+        hideAllElementsByClassName("screen-container");
         resetEndButtonOpacity();
 
-        screen.style.display = "";
+        screen.classList.remove("hidden");
+        resetDeckScroll();
 
         return screen;
       }
@@ -198,13 +214,6 @@
         return deckElements;
       }
 
-      function changeEndButtonDisplay(display){
-        const endButtons = document.getElementsByClassName("request-end");
-        for (const endButton of endButtons){
-          endButton.style.display = display;
-        }
-      }
-
       function setWagerCard(cardId){
         const shownCard = document.getElementById("shown-card");
         shownCard.src = largeCardImageUrl + cardId + ".jpg";
@@ -235,7 +244,6 @@
         card.src = smallCardImageUrl + cardId + ".jpg";
         card.cardId = cardId;
         card.wager  = cardWager;
-        console.log(card.wager);
         card.largeImage = largeCardImageUrl + cardId + ".jpg";
         card.onmouseover = () => {
           const largeCardElements     = document.getElementsByClassName("large-card");
@@ -298,14 +306,6 @@
         socket.emit("start-game");
       }
 
-      function showPlayer1Elements(){
-        const player1Elements = document.getElementsByClassName("player-1-element");
-        for(const element of player1Elements){
-          element.style.display = "";
-        }
-        console.log("showing player 1 elements");
-      }
-
       socket.on("non-number-wager", () => {
         console.log("Non number wager");
       });
@@ -356,11 +356,11 @@
       });
 
       socket.on("show-end-button", () => {
-        changeEndButtonDisplay("");
+        showAllElementsByClassName("request-end");
       });
 
       socket.on("hide-end-button", () => {
-        changeEndButtonDisplay("none");
+        hideAllElementsByClassName("request-end");
       });
 
       socket.on("download", (ydkFile) => {
@@ -386,7 +386,7 @@
       });
 
       socket.on("is-player-1", () => {
-        showPlayer1Elements();
+        showAllElementsByClassName("player-1-element");
       });
 
       socket.on("card-added", (cardObject) => {

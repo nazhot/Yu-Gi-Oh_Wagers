@@ -65,3 +65,7 @@
 .deck-card {
     width: 10%;
 }
+
+.hidden {
+    display: none !important;  
+}
