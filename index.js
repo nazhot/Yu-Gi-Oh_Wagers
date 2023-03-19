@@ -598,6 +598,25 @@ function allWageredActions(){
 }
 
 /**
+ * Actions to take when all players have finally liquidated
+ * -Reset all players statuses
+ * -Emit decks to all players //TODO: update so it is only happening when a player liquidates
+ *                            //TODO: look into maybe immediately updating the decks rather than waiting for everyone?
+ * -Emit token updates to everyone //TODO: only do if number changes
+ * -Emit everyone's deck sizes
+ * -Tell everyone to change to wager screen
+ */
+function allLiquidatedActions(){
+    data.resetAllPlayersStatuses();
+    for (const player in data.players){
+        emitDeck(player);
+        emitTokenUpdate(player);
+    }
+    emitAllPlayersDeckSize();
+    emitChangeAllToWagerScreen();
+}
+
+/**
  * Whether a string could be converted to a number or not
  * @param {string} stringToCheck string being checked
  * @returns {boolean} string can be converted to a number
@@ -706,13 +725,7 @@ io.on("connection", (socket) => {
 
         const allLiquidated = checkIfAllPlayersLiquidated();
         if (allLiquidated){
-            data.resetAllPlayersStatuses();
-            for (const player in data.players){
-                emitDeck(player);
-                emitTokenUpdate(player);
-            }
-            emitAllPlayersDeckSize();
-            emitChangeAllToWagerScreen();
+            allLiquidatedActions();
         }
         //console.log(allLiquidated);
     });
