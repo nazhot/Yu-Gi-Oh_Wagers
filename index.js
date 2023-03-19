@@ -279,6 +279,10 @@ function defaultPlayerData(){
     };
 }
 
+/**
+ * All of the properties that a player has
+ * @returns the default player.statuses object
+ */
 function defaultPlayerStatuses(){
     return {
         wagered: false,
@@ -520,7 +524,7 @@ function emitAllPlayersDeckSize(){
 
 /**
  * Tell a player how big their deck is
- * @param {*} player 
+ * @param {string} player socket.id of player to check
  */
 function emitDeckSize(player){
     io.to(player).emit("deck-size-update", data.players[player].cards.length);
