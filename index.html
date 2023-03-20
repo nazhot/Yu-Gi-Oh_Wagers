@@ -95,6 +95,14 @@
       const smallCardImageUrl = "https://images.ygoprodeck.com/images/cards_small/";
       const largeCardImageUrl = "https://images.ygoprodeck.com/images/cards/";
 
+      //allow player to press enter after typing in their wager amount
+      document.getElementById("player-wager-amount").addEventListener("keypress", (event) => {
+        if (event.key === "Enter"){
+          event.preventDefault();
+          document.getElementById("submit-wager").click();
+        }
+      });
+
       function toggleCardSelect(cardElement){
         if (cardElement.classList.contains("selected-card")) {
           cardElement.classList.remove("selected-card");
@@ -345,10 +353,12 @@
 
       socket.on("change-to-wager-screen", () => {
         changeToScreen("wagering-page");
+        document.getElementById("player-wager-amount").focus();
       });
 
       socket.on("change-to-liquidate-screen", () => {
         changeToScreen("liquidating-page");
+        document.getElementById("liquidate-cards").focus();
       });
 
       socket.on("change-to-end-screen", () => {
