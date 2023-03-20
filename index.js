@@ -250,7 +250,7 @@ const data = {
     },
 };
 
-const cardList = fs.readFileSync("public/cardLists/Draft Masters", "utf-8").split("\n");
+const cardList = fs.readFileSync("public/cardLists/Old School", "utf-8").split("\n");
 shuffleArray(cardList);
 data.cardList = cardList;
 
