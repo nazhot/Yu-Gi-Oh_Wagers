@@ -1,4 +1,5 @@
 const express = require("express");
+const request = require("request");
 const app = express();
 const cors = require("cors");
 const fs = require("fs");
@@ -27,6 +28,14 @@ const io = new Server(server, {path: "/wagersocket/",
                                },
                             });
 /*/
+
+let nameDescJSON;
+request("https://noahzydel.com/yugioh-files/card-jsons/key-id-values-desc-name.json", (error, response, body) => {
+    if (!error && response.statusCode == 200){
+        nameDescJSON = JSON.parse(body);
+        console.log("Able to import json");
+    }
+});
 
 app.use(express.static(__dirname));
 
