@@ -1,11 +1,32 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+const fs = require("fs");
 const http = require("http");
+const { isTypedArray } = require("util/types");
+//** //remove slash to comment out for server
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const fs = require("fs");
-const { isTypedArray } = require("util/types");
+//*/ 
+
+/** //add slash to uncomment for server, don't forget to add actual file locations
+const https = require("https");        
+const server = https.createServer({
+	key:  fs.readFileSync('privkey.pem'),
+	cert: fs.readFileSync('cert.pem'),
+	ca:   fs.readFileSync('chain.pem'),
+	requestCert: false,
+	rejectUnauthorized: false
+}, app);      
+const { Server } = require("socket.io"); 
+const io = new Server(server, {path: "/wagersocket/",
+                               cors: {
+                                origin: "https://noahzydel.com",
+                                methods: ["GET", "POST"],
+                               },
+                            });
+/*/
 
 app.use(express.static(__dirname));
 
