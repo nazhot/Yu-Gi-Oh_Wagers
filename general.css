@@ -69,3 +69,7 @@
 .hidden {
     display: none !important;  
 }
+
+.description-container {
+    overflow-y: scroll;
+}

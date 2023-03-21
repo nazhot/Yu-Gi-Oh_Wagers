@@ -70,7 +70,11 @@ app.get("/wager/", (req, res) => {
 const data = {
     numPlayers: 0,
     players: {},
-    currentCard: "",
+    currentCard: {
+        id:   "",
+        name: "",
+        desc: "",
+    },
     currentWagers: {},
     cardList: [],
     /**
@@ -84,7 +88,9 @@ const data = {
      */
     addCardToPlayer(player){
         this.players[player].cards.push({
-            id:  this.currentCard,
+            id:  this.currentCard.id,
+            name: this.currentCard.name,
+            desc: this.currentCard.desc,
             wager:  this.currentWagers[player],
             value: this.getLowestWager(),
         })
@@ -111,7 +117,10 @@ const data = {
      * Pops cardList in order to set currentCard
      */
     setCurrentCardFromCardList(){
-        this.currentCard = cardList.pop();
+        this.currentCard.id = cardList.pop();
+        const values = nameDescJSON[this.currentCard.id];
+        this.currentCard.name = values.name;
+        this.currentCard.desc = values.desc;
     },
 
     /**
@@ -433,7 +442,7 @@ function emitChangeAllToEndScreen(){
 function emitDeck(player){
     const deck = [];
     for (const card of data.players[player].cards){
-        deck.push({id: card.id, wager: card.wager});
+        deck.push({id: card.id, name: card.name, desc: card.desc, wager: card.wager});
     }
     io.to(player).emit("deck", deck);
 }
@@ -443,7 +452,7 @@ function emitDeck(player){
  * @param {string} player socket.id of player
  */
 function emitCurrentCardAdded(player){
-    io.to(player).emit("card-added", {id: data.currentCard, wager: data.currentWagers[player]});
+    io.to(player).emit("card-added", {id: data.currentCard.id, name: data.currentCard.name, desc: data.currentCard.desc, wager: data.currentWagers[player]});
 }
 
 /**
@@ -509,7 +518,7 @@ function emitTokenUpdate(player){
  */
 function emitWagerCard(){
     for (const player in data.players){
-        io.to(player).emit("wager-card", data.currentCard)
+        io.to(player).emit("wager-card", data.currentCard);
     }
 }
 

@@ -21,6 +21,10 @@
       <div id="shown-card-container">
         <p>Wagered Card</p>
         <img id="shown-card" src="public/images/back.png">
+        <p id="wagered-card-name"></p>
+        <div class="description-container">
+          <p id="wagered-card-desc"></p>
+        </div>
       </div>
 
       <div id="wagering-deck-container" class="deck-container">
@@ -33,6 +37,10 @@
         <img class="large-card" src="public/images/back.png">
         <p>Your Wager</p>
         <p class="previous-wager"></p>
+        <p class="hovered-card-name"></p>
+        <div class="description-container">
+          <p class="hovered-card-desc"></p>
+        </div>
       </div>
 
       <div class="bottom-nav-container">
@@ -66,6 +74,10 @@
         <img class="large-card" src="public/images/back.png">
         <p>Your Wager</p>
         <p class="previous-wager"></p>
+        <p class="hovered-card-name"></p>
+        <div class="description-container">
+          <p class="hovered-card-desc"></p>
+        </div>
       </div>
       <div class="bottom-nav-container">
         <div class="player-information-container">
@@ -223,9 +235,11 @@
         return deckElements;
       }
 
-      function setWagerCard(cardId){
+      function setWagerCard(cardObject){
         const shownCard = document.getElementById("shown-card");
-        shownCard.src = largeCardImageUrl + cardId + ".jpg";
+        shownCard.src = largeCardImageUrl + cardObject.id + ".jpg";
+        document.getElementById("wagered-card-name").innerHTML = cardObject.name;
+        document.getElementById("wagered-card-desc").innerHTML = cardObject.desc;
       }
 
       function download(filename, text) {
@@ -253,6 +267,8 @@
         card.src = smallCardImageUrl + cardId + ".jpg";
         card.cardId = cardId;
         card.wager  = cardWager;
+        card.cardName = cardObject.name;
+        card.cardDesc = cardObject.desc;
         card.largeImage = largeCardImageUrl + cardId + ".jpg";
         card.onmouseover = () => {
           const largeCardElements     = document.getElementsByClassName("large-card");
@@ -262,6 +278,8 @@
             largeCardElement.src = card.largeImage;
           }
           setInfoPanes("previous-wager", card.wager);
+          setInfoPanes("hovered-card-name", card.cardName);
+          setInfoPanes("hovered-card-desc", card.cardDesc);
         };
 
         card.onmouseleave = () => {
@@ -270,6 +288,8 @@
             largeCardElement.src = cardBackImage;
           }
           setInfoPanes("previous-wager", "");
+          setInfoPanes("hovered-card-name", "");
+          setInfoPanes("hovered-card-desc", "");
         };
 
         card.onclick = () => {
@@ -340,8 +360,8 @@
         setTokenCount(tokensRemaining);
       });
 
-      socket.on("wager-card", (cardId) => {
-        setWagerCard(cardId);
+      socket.on("wager-card", (cardObject) => {
+        setWagerCard(cardObject);
       });
 
       socket.on("wager-placed", (playerThatPlacedWager) => {
