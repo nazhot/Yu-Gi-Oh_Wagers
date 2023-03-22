@@ -30,7 +30,7 @@ const io = new Server(server, {path: "/wagersocket/",
 /*/  //remove slash to uncomment for server
 
 let nameDescJSON;
-request("https://noahzydel.com/yugioh-files/card-jsons/key-id-values-desc-name.json", (error, response, body) => {
+request("https://noahzydel.com/yugioh-files/card-jsons/key-id-values-desc-name-type.json", (error, response, body) => {
     if (!error && response.statusCode == 200){
         nameDescJSON = JSON.parse(body);
         console.log("Able to import json");
@@ -117,10 +117,10 @@ const data = {
      * Pops cardList in order to set currentCard
      */
     setCurrentCardFromCardList(){
-        this.currentCard.id = cardList.pop();
-        const values = nameDescJSON[this.currentCard.id];
-        this.currentCard.name = values.name;
-        this.currentCard.desc = values.desc;
+        const cardId = cardList.pop();
+        this.currentCard = {...nameDescJSON[cardId]};
+        this.currentCard.id = cardId;
+        console.log(this.currentCard);
     },
 
     /**
