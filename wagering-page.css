@@ -1,7 +1,10 @@
 #shown-card-container {
+    display: flex;
+    flex-direction: column;
     grid-area: left-column;
     border: 1px solid green;
     text-align: center;
+    overflow-y: scroll;
 }
 
 #shown-card {
