@@ -27,7 +27,7 @@ const io = new Server(server, {path: "/wagersocket/",
                                 methods: ["GET", "POST"],
                                },
                             });
-/*/
+/*/  //remove slash to uncomment for server
 
 let nameDescJSON;
 request("https://noahzydel.com/yugioh-files/card-jsons/key-id-values-desc-name.json", (error, response, body) => {
