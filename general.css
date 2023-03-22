@@ -10,7 +10,7 @@
     grid-template-areas: 'left-column main-content right-column'
                          'bottom-nav bottom-nav bottom-nav';
     grid-template-rows: 8fr 1fr;
-    grid-template-columns: 1fr 5fr 1fr;
+    grid-template-columns: 1fr 4.5fr 1fr;
 }
 
 
