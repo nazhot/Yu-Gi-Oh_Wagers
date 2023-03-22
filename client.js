@@ -175,28 +175,27 @@ function generateCardElement(cardObject) {
     card.cardDesc = cardObject.desc;
     card.largeImage = largeCardImageUrl + cardId + ".jpg";
     card.onmouseover = () => {
+        for (const largeCardElement of largeCardElements) {
+            largeCardElement.src = card.largeImage;
+        }
 
-    for (const largeCardElement of largeCardElements) {
-        largeCardElement.src = card.largeImage;
-    }
-
-    setInfoPanes("previous-wager", card.wager);
-    setInfoPanes("hovered-card-name", card.cardName);
-    setInfoPanes("hovered-card-desc", card.cardDesc);
+        setInfoPanes("previous-wager", card.wager);
+        setInfoPanes("hovered-card-name", card.cardName);
+        setInfoPanes("hovered-card-desc", card.cardDesc);
     };
 
     card.onmouseleave = () => {
-    const largeCardElements = document.getElementsByClassName("large-card");
-    for (const largeCardElement of largeCardElements) {
-        largeCardElement.src = cardBackImage;
-    }
-    setInfoPanes("previous-wager", "");
-    setInfoPanes("hovered-card-name", "");
-    setInfoPanes("hovered-card-desc", "");
+        const largeCardElements = document.getElementsByClassName("large-card");
+        for (const largeCardElement of largeCardElements) {
+            largeCardElement.src = cardBackImage;
+        }
+        setInfoPanes("previous-wager", "");
+        setInfoPanes("hovered-card-name", "");
+        setInfoPanes("hovered-card-desc", "");
     };
 
     card.onclick = () => {
-    toggleCardSelect(card);
+        toggleCardSelect(card);
     };
 
     return card;
@@ -214,8 +213,8 @@ function addCard(cardObject) {
     const deckElements = document.getElementsByClassName("deck");
 
     for (const deckElement of deckElements) {
-    const cardElement = generateCardElement(cardObject); //for each deck element, a new cardElement must be generated. Learned the hard way
-    deckElement.appendChild(cardElement);
+        const cardElement = generateCardElement(cardObject); //for each deck element, a new cardElement must be generated. Learned the hard way
+        deckElement.appendChild(cardElement);
     }
 }
 
@@ -226,11 +225,15 @@ function addCard(cardObject) {
 function setDeck(cardList) {
     const deckElements = clearDeck();
     for (const cardObject of cardList) {
-    for (const deckElement of deckElements) {
-        const cardElement = generateCardElement(cardObject); //new card element must be generated for every new element it's being added to
-        deckElement.appendChild(cardElement);
+        for (const deckElement of deckElements) {
+            const cardElement = generateCardElement(cardObject); //new card element must be generated for every new element it's being added to
+            deckElement.appendChild(cardElement);
+        }
     }
-    }
+}
+
+function setBreakdownPanes(breakdown){
+    
 }
 
 function submitStartGame() {
@@ -240,6 +243,13 @@ function submitStartGame() {
 
 socket.on("non-number-wager", () => {
     console.log("Non number wager");
+});
+
+socket.on("start-game", () => {
+    const bottomNavs = document.getElementsByClassName("bottom-nav-container");
+    for (const bottomNav of bottomNavs){
+        bottomNav.classList.remove("hidden");
+    }
 });
 
 socket.on("insufficient-tokens", () => {

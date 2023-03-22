@@ -473,6 +473,7 @@ function emitDeck(player){
  * @param {string} player socket.id of player
  */
 function emitCurrentCardAdded(player){
+    const breakdown = data.getPlayerCardTypeBreakdown(player);
     io.to(player).emit("card-added", {...data.currentCard, wager: data.currentWagers[player]}, breakdown);
 }
 
@@ -579,6 +580,12 @@ function emitAllPlayersTokens(){
 function emitAllPlayersDeckSize(){
     for (const player in data.players){
         emitDeckSize(player);
+    }
+}
+
+function emitStartGame(){
+    for (const player in data.players){
+        io.to(player).emit("start-game");
     }
 }
 
@@ -737,6 +744,7 @@ io.on("connection", (socket) => {
         emitAllPlayersTokens();
         data.setCurrentCardFromCardList();
         emitChangeAllToWagerScreen();
+        emitStartGame();
     });
 
     /**

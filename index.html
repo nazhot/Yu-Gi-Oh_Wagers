@@ -9,77 +9,59 @@
     <link rel="stylesheet" href="wagering-page.css" type="text/css"/>
   </head>
   <body>
-    <div id="home-page" class="screen-container">
-      <label for="token-count" class="player-1-element hidden">Tokens</label>
-      <input type="number" name="token-count" id="token-count" class="player-1-element hidden">
-      <button type="button" id="start-game-button" class="player-1-element hidden" onclick="submitStartGame()">Start Game</button>
-      <p id="opponent-connected" class="hidden">Opponent Connected!</p>
-      <button type="button" id="player-ready-button" class="not-ready" onclick="swapReadyStatus(this)">NOT READY</button>
-    </div>
-    <div id="wagering-page" class="screen-container hidden">
+    <div id="full-page">
+      <div id="home-page" class="screen-container">
+        <label for="token-count" class="player-1-element hidden">Tokens</label>
+        <input type="number" name="token-count" id="token-count" class="player-1-element hidden">
+        <button type="button" id="start-game-button" class="player-1-element hidden" onclick="submitStartGame()">Start Game</button>
+        <p id="opponent-connected" class="hidden">Opponent Connected!</p>
+        <button type="button" id="player-ready-button" class="not-ready" onclick="swapReadyStatus(this)">NOT READY</button>
+      </div>
+      <div id="wagering-page" class="screen-container hidden">
+        <div id="shown-card-container">
+          <p>Wagered Card</p>
+          <img id="shown-card" src="public/images/back.png">
+          <p id="wagered-card-name"></p>
+          <div class="description-container">
+            <p id="wagered-card-desc"></p>
+          </div>
+        </div>
 
-      <div id="shown-card-container">
-        <p>Wagered Card</p>
-        <img id="shown-card" src="public/images/back.png">
-        <p id="wagered-card-name"></p>
-        <div class="description-container">
-          <p id="wagered-card-desc"></p>
+        <div id="wagering-deck-container" class="deck-container">
+          <div id="wagering-deck" class="deck">
+          </div>
+        </div>
+
+        <div class="large-card-container">
+          <p>Hovered Card</p>
+          <img class="large-card" src="public/images/back.png">
+          <p>Your Wager</p>
+          <p class="previous-wager"></p>
+          <p class="hovered-card-name"></p>
+          <div class="description-container">
+            <p class="hovered-card-desc"></p>
+          </div>
         </div>
       </div>
 
-      <div id="wagering-deck-container" class="deck-container">
-        <div id="wagering-deck" class="deck">
-        </div>
-      </div>
+      <div id="liquidating-page"  class="screen-container hidden">
+        <div id="liquidating-deck-container" class="deck-container">
+          <div id="liquidating-deck" class="deck">
 
-      <div class="large-card-container">
-        <p>Hovered Card</p>
-        <img class="large-card" src="public/images/back.png">
-        <p>Your Wager</p>
-        <p class="previous-wager"></p>
-        <p class="hovered-card-name"></p>
-        <div class="description-container">
-          <p class="hovered-card-desc"></p>
+          </div>
+        </div>
+        <div class="large-card-container">
+          <p>Hovered Card</p>
+          <img class="large-card" src="public/images/back.png">
+          <p>Your Wager</p>
+          <p class="previous-wager"></p>
+          <p class="hovered-card-name"></p>
+          <div class="description-container">
+            <p class="hovered-card-desc"></p>
+          </div>
         </div>
       </div>
-
-      <div class="bottom-nav-container">
-        <div class="player-information-container">
-          <span>Tokens:</span>
-          <span class="player-token-count"> </span>
-          <p></p>
-          <span>Deck Size:</span>
-          <span class="player-deck-size"> </span>
-          <p></p>
-          <span>Cards Remaining:</span>
-          <span class="player-cards-remaining"></span>
-        </div>
-        <button class="request-end hidden" onclick="submitRequestEnd(this)">PLZ STOP</button>
-        <div id="player-wager-options-container" class="submit-container">
-          <label for="player-wager-amount">Wager:</label>
-          <input type="number" name="player-wager-amount" id="player-wager-amount">
-          <button id="submit-wager" onclick="submitWager()">Submit Wager</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="liquidating-page"  class="screen-container hidden">
-      <div id="liquidating-deck-container" class="deck-container">
-        <div id="liquidating-deck" class="deck">
-
-        </div>
-      </div>
-      <div class="large-card-container">
-        <p>Hovered Card</p>
-        <img class="large-card" src="public/images/back.png">
-        <p>Your Wager</p>
-        <p class="previous-wager"></p>
-        <p class="hovered-card-name"></p>
-        <div class="description-container">
-          <p class="hovered-card-desc"></p>
-        </div>
-      </div>
-      <div class="bottom-nav-container">
+      <div class="bottom-nav-container hidden">
         <div class="player-information-container">
           <span>Tokens:</span>
           <span class="player-token-count"> </span>
@@ -94,12 +76,17 @@
         <div id="player-liquidation-options-container" class="submit-container">
           <button id="liquidate-cards" onclick="submitLiquidate()">Liquidate Card(s)</button>
         </div>
+        <div id="player-wager-options-container" class="submit-container">
+          <label for="player-wager-amount">Wager:</label>
+          <input type="number" name="player-wager-amount" id="player-wager-amount">
+          <button id="submit-wager" onclick="submitWager()">Submit Wager</button>
+        </div>
       </div>
+      <div id="end-page" class="screen-container hidden">
+        <button id="download-deck" onclick="submitDownload()">Download</button>
+      </div>
+      <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
+      <script src="client.js" defer></script>
     </div>
-    <div id="end-page" class="screen-container hidden">
-      <button id="download-deck" onclick="submitDownload()">Download</button>
-    </div>
-    <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
-    <script src="client.js" defer></script>
   </body>
 </html>

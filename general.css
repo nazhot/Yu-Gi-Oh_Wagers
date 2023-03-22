@@ -3,13 +3,20 @@
     box-sizing: border-box;
 }
 
-.screen-container {
+#full-page {
     display: grid;
     width: 100vw;
     height: 100vh;
-    grid-template-areas: 'left-column main-content right-column'
-                         'bottom-nav bottom-nav bottom-nav';
+    grid-template-areas: 'top-content'
+                         'bottom-nav';
     grid-template-rows: 8fr 1fr;
+}
+.screen-container {
+    grid-area: top-content;
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-areas: 'left-column main-content right-column';
     grid-template-columns: 1fr 4.5fr 1fr;
 }
 
