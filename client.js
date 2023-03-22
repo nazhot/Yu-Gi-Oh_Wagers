@@ -321,10 +321,10 @@ socket.on("is-player-1", () => {
     showAllElementsByClassName("player-1-element");
 });
 
-socket.on("card-added", (cardObject) => {
+socket.on("card-added", (cardObject, breakdown) => {
     addCard(cardObject);
 });
 
-socket.on("deck", (cardList) => {
+socket.on("deck", (cardList, breakdown) => {
     setDeck(cardList);
 });

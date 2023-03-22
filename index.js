@@ -88,9 +88,7 @@ const data = {
      */
     addCardToPlayer(player){
         this.players[player].cards.push({
-            id:  this.currentCard.id,
-            name: this.currentCard.name,
-            desc: this.currentCard.desc,
+            ...this.currentCard,
             wager:  this.currentWagers[player],
             value: this.getLowestWager(),
         })
@@ -120,7 +118,6 @@ const data = {
         const cardId = cardList.pop();
         this.currentCard = {...nameDescJSON[cardId]};
         this.currentCard.id = cardId;
-        console.log(this.currentCard);
     },
 
     /**
@@ -202,6 +199,28 @@ const data = {
             returnData[player] = this.getPlayerStatus(player, property);
         }
         return returnData;
+    },
+
+    getPlayerCardTypeBreakdown(player){
+        const cards = this.players[player].cards;
+        const breakdown = {
+            "Normal Monsters": 0,
+            "Effect Monsters": 0,
+            "Traps": 0,
+            "Spells": 0,
+        }
+        for (const card of cards){
+            if (card.type === "Trap Card"){
+                breakdown["Traps"]++;
+            } else if (card.type === "Spell Card"){
+                breakdown["Spells"]++;
+            } else if (card.type.includes("Normal")){
+                breakdown["Normal Monsters"]++;
+            } else if (card.type.includes("Monster")){
+                breakdown["Effect Monsters"]++;
+            }
+        }
+        return breakdown;
     },
 
     /**
@@ -442,9 +461,11 @@ function emitChangeAllToEndScreen(){
 function emitDeck(player){
     const deck = [];
     for (const card of data.players[player].cards){
-        deck.push({id: card.id, name: card.name, desc: card.desc, wager: card.wager});
+        deck.push(card);
     }
-    io.to(player).emit("deck", deck);
+    const breakdown = data.getPlayerCardTypeBreakdown(player);
+    console.log(breakdown);
+    io.to(player).emit("deck", deck, breakdown);
 }
 
 /**
@@ -452,7 +473,7 @@ function emitDeck(player){
  * @param {string} player socket.id of player
  */
 function emitCurrentCardAdded(player){
-    io.to(player).emit("card-added", {id: data.currentCard.id, name: data.currentCard.name, desc: data.currentCard.desc, wager: data.currentWagers[player]});
+    io.to(player).emit("card-added", {...data.currentCard, wager: data.currentWagers[player]}, breakdown);
 }
 
 /**
