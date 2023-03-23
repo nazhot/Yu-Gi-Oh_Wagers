@@ -432,19 +432,19 @@ function emitWagerPlaced(player, playerName, tokensRemaining){
 /**
  * Tell all players to change their screen to the wager screen, and tell them the card being wagered
  */
-function emitChangeAllToWagerScreen(){
+function emitChangeAllToWagerElements(){
     for (const player in data.players){
-        emitChangeToWagerScreen(player);
+        emitWagerCard(player);
+        emitChangeToWagerElements(player);
     }
-    emitWagerCard();
 }
 
 /**
  * Tell all players to change their screen to the liquidate screen
  */
-function emitChangeAllToLiquidateScreen(){
+function emitChangeAllToLiquidateElements(){
     for (const player in data.players){
-        emitChangeToLiquidateScreen(player);
+        emitChangeToLiquidateElements(player);
     }
 }
 
@@ -485,16 +485,20 @@ function emitCurrentCardAdded(player){
  * Tell a player to change to the wager screen
  * @param {string} player socket.id of the player
  */
-function emitChangeToWagerScreen(player){
-    io.to(player).emit("change-to-wager-screen");
+function emitChangeToWagerElements(player){
+    io.to(player).emit("change-to-wager-elements");
+}
+
+function emitChangeToPlayingScreen(player){
+    io.to(player).emit("change-to-playing-screen");
 }
 
 /**
  * Tell a player to change to the liquidate screen
  * @param {string} player socket.id of the player
  */
-function emitChangeToLiquidateScreen(player){
-    io.to(player).emit("change-to-liquidate-screen");
+function emitChangeToLiquidateElements(player){
+    io.to(player).emit("change-to-liquidate-elements");
 }
 
 /**
@@ -539,13 +543,18 @@ function emitTokenUpdate(player){
     io.to(player).emit("token-update", data.players[player].tokens);
 }
 
+function emitAllPlayersWagerCard(){
+    const currentCard = data.currentCard;
+    for(const player in data.players){
+        io.to(player).emit("wager-card", currentCard);
+    }
+}
+
 /**
  * Tell all players the new wager card
  */
-function emitWagerCard(){
-    for (const player in data.players){
-        io.to(player).emit("wager-card", data.currentCard);
-    }
+function emitWagerCard(player){
+    io.to(player).emit("wager-card", data.currentCard);
 }
 
 /**
@@ -569,6 +578,10 @@ function emitAllPlayersCardsRemaining(){
     }
 }
 
+function emitCardsRemaining(player){
+    io.to(player).emit("cards-remaining-update", data.getCardsRemaining());
+}
+
 /**
  * Tell all players how many tokens they have
  */
@@ -584,12 +597,6 @@ function emitAllPlayersTokens(){
 function emitAllPlayersDeckSize(){
     for (const player in data.players){
         emitDeckSize(player);
-    }
-}
-
-function emitStartGame(){
-    for (const player in data.players){
-        io.to(player).emit("start-game");
     }
 }
 
@@ -677,7 +684,7 @@ function allWageredActions(){
     const afterAllPlayersOver40 = data.getAllPlayersAtLeastXCards(40);
     updateEndButtonsBasedOnCardChange(beforeAllPlayersOver40, afterAllPlayersOver40);
     data.setCurrentCardFromCardList();
-    emitChangeAllToLiquidateScreen();
+    emitChangeAllToLiquidateElements();
 }
 
 /**
@@ -698,7 +705,7 @@ function allLiquidatedActions(){
         emitTokenUpdate(player);
     }
     data.resetAllPlayersStatuses();
-    emitChangeAllToWagerScreen();
+    emitChangeAllToWagerElements();
 }
 
 /**
@@ -743,12 +750,14 @@ io.on("connection", (socket) => {
      * Starts the game by sending players relevant information, setting the currentCard, and telling all players to go to wager screen
      */
     socket.on("start-game", () => {
-        emitAllPlayersCardsRemaining();
-        emitAllPlayersDeckSize();
-        emitAllPlayersTokens();
         data.setCurrentCardFromCardList();
-        emitChangeAllToWagerScreen();
-        emitStartGame();
+        for (const player in data.players){
+            emitCardsRemaining(player);
+            emitDeckSize(player);
+            emitTokenUpdate(player);
+            emitChangeToPlayingScreen(player);
+            emitWagerCard(player);
+        }
     });
 
     /**

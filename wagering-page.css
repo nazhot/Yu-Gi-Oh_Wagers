@@ -1,13 +1,14 @@
-#shown-card-container {
+#wagered-card-container {
+    height: 100%;
     display: flex;
     flex-direction: column;
     grid-area: left-column;
     border: 1px solid green;
     text-align: center;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
-#shown-card {
+#wagered-card {
     width: 95%;
     margin: auto;
 }

@@ -56,10 +56,8 @@ function submitWager() {
 }
 
 function resetDeckScroll() {
-    const deckElements = document.getElementsByClassName("deck-container");
-    for (const deckElement of deckElements) {
+    const deckElement = document.getElementById("deck-container");
     deckElement.scrollTop = 0;
-    }
 }
 
 function submitLiquidate() {
@@ -121,13 +119,11 @@ function setInfoPane(elementId, value) {
 }
 
 function clearDeck() {
-    const deckElements = document.getElementsByClassName("deck");
-    for (const deckElement of deckElements) {
+    const deckElement = document.getElementById("deck");
     while (deckElement.firstChild) {
         deckElement.removeChild(deckElement.lastChild);
     }
-    }
-    return deckElements;
+    return deckElement;
 }
 
 function setDeckBreakdown(breakdown){
@@ -138,9 +134,9 @@ function setDeckBreakdown(breakdown){
     }
 }
 
-function setWagerCard(cardObject) {
-    const shownCard = document.getElementById("shown-card");
-    shownCard.src = largeCardImageUrl + cardObject.id + ".jpg";
+function setWageredCard(cardObject) {
+    const wageredCard = document.getElementById("wagered-card");
+    wageredCard.src   = largeCardImageUrl + cardObject.id + ".jpg";
     document.getElementById("wagered-card-name").innerHTML = cardObject.name;
     document.getElementById("wagered-card-desc").innerHTML = cardObject.desc;
 }
@@ -178,8 +174,8 @@ function generateCardElement(cardObject) {
     card.cardDesc = cardObject.desc;
     card.largeImage = largeCardImageUrl + cardId + ".jpg";
     card.onmouseover = () => {
-        const largeCardElement = document.getElementById("large-card");
-        largeCardElement.src = card.largeImage;
+        const hoveredCardElement = document.getElementById("hovered-card");
+        hoveredCardElement.src   = card.largeImage;
 
         setInfoPane("previous-wager", card.wager);
         setInfoPane("hovered-card-name", card.cardName);
@@ -187,8 +183,8 @@ function generateCardElement(cardObject) {
     };
 
     card.onmouseleave = () => {
-        const largeCardElement = document.getElementById("large-card");
-        largeCardElement.src = cardBackImage;
+        const hoveredCardElement = document.getElementById("hovered-card");
+        hoveredCardElement.src   = cardBackImage;
     
         setInfoPane("previous-wager", "");
         setInfoPane("hovered-card-name", "");
@@ -211,12 +207,10 @@ function generateCardElement(cardObject) {
  * @param {string} cardId id of the card to add
  */
 function addCard(cardObject) {
-    const deckElements = document.getElementsByClassName("deck");
-
-    for (const deckElement of deckElements) {
-        const cardElement = generateCardElement(cardObject); //for each deck element, a new cardElement must be generated. Learned the hard way
-        deckElement.appendChild(cardElement);
-    }
+    const deckElement = document.getElementById("deck");
+    const cardElement = generateCardElement(cardObject); //for each deck element, a new cardElement must be generated. Learned the hard way
+    
+    deckElement.appendChild(cardElement);
 }
 
 /**
@@ -224,12 +218,10 @@ function addCard(cardObject) {
  * @param {array} cardList array of cardIds to be added
  */
 function setDeck(cardList) {
-    const deckElements = clearDeck();
+    const deckElement = clearDeck();
     for (const cardObject of cardList) {
-        for (const deckElement of deckElements) {
-            const cardElement = generateCardElement(cardObject); //new card element must be generated for every new element it's being added to
-            deckElement.appendChild(cardElement);
-        }
+        const cardElement = generateCardElement(cardObject);
+        deckElement.appendChild(cardElement);
     }
 }
 
@@ -240,10 +232,6 @@ function submitStartGame() {
 
 socket.on("non-number-wager", () => {
     console.log("Non number wager");
-});
-
-socket.on("start-game", () => {
-    document.getElementById("bottom-nav-container").classList.remove("hidden");
 });
 
 socket.on("insufficient-tokens", () => {
@@ -268,7 +256,7 @@ socket.on("self-wager-placed", (tokensRemaining) => {
 });
 
 socket.on("wager-card", (cardObject) => {
-    setWagerCard(cardObject);
+    setWageredCard(cardObject);
 });
 
 socket.on("wager-placed", (playerThatPlacedWager) => {});
@@ -277,18 +265,25 @@ socket.on("invalid-liquidation", () => {
     console.log("Invalid liquidation");
 });
 
-socket.on("change-to-wager-screen", () => {
-    changeToScreen("wagering-page");
+socket.on("change-to-playing-screen", ()=> {
+    changeToScreen("playing-screen");
     document.getElementById("player-wager-amount").focus();
 });
 
-socket.on("change-to-liquidate-screen", () => {
-    changeToScreen("liquidating-page");
+socket.on("change-to-wager-elements", () => {
+    hideAllElementsByClassName("liquidate-element");
+    showAllElementsByClassName("wager-element");
+    document.getElementById("player-wager-amount").focus();
+});
+
+socket.on("change-to-liquidate-elements", () => {
+    hideAllElementsByClassName("wager-element");
+    showAllElementsByClassName("liquidate-element");
     document.getElementById("liquidate-cards").focus();
 });
 
 socket.on("change-to-end-screen", () => {
-    changeToScreen("end-page");
+    changeToScreen("end-screen");
 });
 
 socket.on("show-end-button", () => {

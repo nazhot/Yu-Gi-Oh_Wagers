@@ -9,87 +9,80 @@
     <link rel="stylesheet" href="wagering-page.css" type="text/css"/>
   </head>
   <body>
-    <div id="full-page">
-      <div id="home-page" class="screen-container">
+      <div id="game-setup-screen" class="screen-container">
         <label for="token-count" class="player-1-element hidden">Tokens</label>
         <input type="number" name="token-count" id="token-count" class="player-1-element hidden">
         <button type="button" id="start-game-button" class="player-1-element hidden" onclick="submitStartGame()">Start Game</button>
         <p id="opponent-connected" class="hidden">Opponent Connected!</p>
         <button type="button" id="player-ready-button" class="not-ready" onclick="swapReadyStatus(this)">NOT READY</button>
       </div>
-      <div id="wagering-page" class="screen-container hidden">
-        <div id="shown-card-container">
-          <p>Wagered Card</p>
-          <img id="shown-card" src="public/images/back.png">
-          <p id="wagered-card-name"></p>
+
+      <div id="playing-screen" class="screen-container hidden">
+        
+        <div class="left-column">
+          <div id="wagered-card-container" class="wager-element">
+            <p>Wagered   Card</p>
+            <img id="wagered-card" src="public/images/back.png">
+            <p id="wagered-card-name"></p>
+            <div class="description-container">
+              <p id="wagered-card-desc"></p>
+            </div>
+          </div>
+          <div class="liquidate-element hidden">
+
+          </div>
+        </div>
+
+        <div id="deck-container">
+          <div id="deck">
+          </div>
+        </div>
+
+        <div id="hovered-card-container">
+          <p>Hovered Card</p>
+          <img id="hovered-card" src="public/images/back.png">
+          <p>Your Wager</p>
+          <p id="previous-wager"></p>
+          <p id="hovered-card-name"></p>
           <div class="description-container">
-            <p id="wagered-card-desc"></p>
+            <p id="hovered-card-desc"></p>
           </div>
         </div>
 
-        <div id="wagering-deck-container" class="deck-container">
-          <div id="wagering-deck" class="deck">
+        <div id="bottom-nav-container">
+          <div id="player-information-container">
+            <span>Tokens:</span><span id="player-token-count"></span>
+            <p></p>
+            <span>Deck Size:</span><span id="player-deck-size"> </span>
+            <p></p>
+            <span>Cards Remaining:</span><span id="player-cards-remaining"></span>
+          </div>
+          <div id="deck-information-container">
+            <span>Effect Monsters:</span><span id="deck-effect-monsters">0</span>
+            <p></p>
+            <span>Normal Monsters:</span><span id="deck-normal-monsters">0</span>
+            <p></p>
+            <span>Traps:</span><span id="deck-traps">0</span>
+            <p></p>
+            <span>Spells:</span><span id="deck-spells">0</span>
+          </div>
+          <button id="request-end" class="hidden" onclick="submitRequestEnd(this)">PLZ STOP</button>
+          <div id="player-liquidation-options-container" class="liquidate-element submit-container hidden">
+            <button id="liquidate-cards" onclick="submitLiquidate()">Liquidate Card(s)</button>
+          </div>
+          <div id="player-wager-options-container" class="wager-element submit-container">
+            <label for="player-wager-amount">Wager:</label>
+            <input type="number" name="player-wager-amount" id="player-wager-amount">
+            <button id="submit-wager" onclick="submitWager()">Submit Wager</button>
           </div>
         </div>
       </div>
 
-      <div id="liquidating-page"  class="screen-container hidden">
-        <div id="liquidating-deck-container" class="deck-container">
-          <div id="liquidating-deck" class="deck">
-
-          </div>
-        </div>
-      </div>
-
-      <div id="large-card-container">
-        <p>Hovered Card</p>
-        <img id="large-card" src="public/images/back.png">
-        <p>Your Wager</p>
-        <p id="previous-wager"></p>
-        <p id="hovered-card-name"></p>
-        <div class="description-container">
-          <p id="hovered-card-desc"></p>
-        </div>
-      </div>
-
-      <div id="bottom-nav-container" class="hidden">
-        <div id="player-information-container">
-          <span>Tokens:</span>
-          <span id="player-token-count"> </span>
-          <p></p>
-          <span>Deck Size:</span>
-          <span id="player-deck-size"> </span>
-          <p></p>
-          <span>Cards Remaining:</span>
-          <span id="player-cards-remaining"></span>
-        </div>
-        <div id="deck-information-container">
-          <span>Effect Monsters:</span>
-          <span id="deck-effect-monsters">0</span>
-          <p></p>
-          <span>Normal Monsters:</span>
-          <span id="deck-normal-monsters">0</span>
-          <p></p>
-          <span>Traps:</span>
-          <span id="deck-traps">0</span>
-          <span>Spells:</span>
-          <span id="deck-spells">0</span>
-        </div>
-        <button id="request-end" class="hidden" onclick="submitRequestEnd(this)">PLZ STOP</button>
-        <div id="player-liquidation-options-container" class="submit-container">
-          <button id="liquidate-cards" onclick="submitLiquidate()">Liquidate Card(s)</button>
-        </div>
-        <div id="player-wager-options-container" class="submit-container">
-          <label for="player-wager-amount">Wager:</label>
-          <input type="number" name="player-wager-amount" id="player-wager-amount">
-          <button id="submit-wager" onclick="submitWager()">Submit Wager</button>
-        </div>
-      </div>
-      <div id="end-page" class="screen-container hidden">
+      <div id="end-screen" class="screen-container hidden">
         <button id="download-deck" onclick="submitDownload()">Download</button>
       </div>
+
       <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
       <script src="client.js" defer></script>
-    </div>
   </body>
 </html>
