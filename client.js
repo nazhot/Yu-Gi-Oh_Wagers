@@ -169,7 +169,6 @@ function generateCardElement(cardObject) {
     const cardId            = cardObject.id;
     const cardWager         = cardObject.wager;
     const card              = document.createElement("img");
-    const largeCardElements = document.getElementsByClassName("large-card");
 
     card.classList.add("deck-card");
     card.src = smallCardImageUrl + cardId + ".jpg";
@@ -179,9 +178,8 @@ function generateCardElement(cardObject) {
     card.cardDesc = cardObject.desc;
     card.largeImage = largeCardImageUrl + cardId + ".jpg";
     card.onmouseover = () => {
-        for (const largeCardElement of largeCardElements) {
-            largeCardElement.src = card.largeImage;
-        }
+        const largeCardElement = document.getElementById("large-card");
+        largeCardElement.src = card.largeImage;
 
         setInfoPane("previous-wager", card.wager);
         setInfoPane("hovered-card-name", card.cardName);
@@ -189,10 +187,9 @@ function generateCardElement(cardObject) {
     };
 
     card.onmouseleave = () => {
-        const largeCardElements = document.getElementsByClassName("large-card");
-        for (const largeCardElement of largeCardElements) {
-            largeCardElement.src = cardBackImage;
-        }
+        const largeCardElement = document.getElementById("large-card");
+        largeCardElement.src = cardBackImage;
+    
         setInfoPane("previous-wager", "");
         setInfoPane("hovered-card-name", "");
         setInfoPane("hovered-card-desc", "");
