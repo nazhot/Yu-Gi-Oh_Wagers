@@ -337,3 +337,7 @@ socket.on("deck", (cardList, breakdown) => {
     setDeck(cardList);
     setDeckBreakdown(breakdown);
 });
+
+socket.on("deck-breakdown", (breakdown) => {
+    setDeckBreakdown(breakdown);
+});

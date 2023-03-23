@@ -414,6 +414,10 @@ function emitInvalidLiquidation(player, card){
     io.to(player).emit("invalid-liquidation", card);
 }
 
+function emitDeckBreakdown(player){
+    io.to(player).emit("deck-breakdown", data.getPlayerCardTypeBreakdown(player));
+}
+
 /**
  * Tell a player that they placed a wager to update their tokens, and let all players know that a wager happened
  * @param {string} player          socket.id of player that placed the wager
