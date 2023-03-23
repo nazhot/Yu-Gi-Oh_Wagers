@@ -3,81 +3,10 @@
     box-sizing: border-box;
 }
 
-#playing-screen {
-    display: grid;
-    width: 100vw;
-    height: 100vh;
-    grid-template-areas: 'left-column main-content right-column'
-                         'bottom-nav bottom-nav bottom-nav';
-    grid-template-columns: 1fr 4.5fr 1fr;
-    grid-template-rows: 8fr 1fr;
-}
-
-
-#deck-container {
-    overflow-y: scroll;
-    grid-area: main-content;
-    border: 1px solid red;
-}
-
-#bottom-nav-container {
-    display: grid;
-    grid-template-areas: 'player-info deck-info . request-end submit';
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-area: bottom-nav;
-    border: 1px solid blue;
-}
-
-#hovered-card-container {
-    grid-area: right-column;
-    border: 1px solid black;
-    text-align: center;
-    overflow-y: scroll;
-}
-
-#hovered-card {
-    width: 95%;
-    margin: auto;
-}
-
-#player-information-container {
-    grid-area: player-info;
-    border: 1px solid black;
-}
-
-#deck-information-container {
-    grid-area: deck-info;
-    border: 1px solid black;
-}
-
-.submit-container {
-    grid-area: submit;
-    border: 1px solid black;
-}
-
-.selected-card {
-    border: 2px solid red;
-}
-
 .player-1-element {
     display: block;
 }
 
-.request-end {
-    grid-area: request-end;
-    display: block;
-}
-
-.deck-card {
-    width: 10%;
-}
-
 .hidden {
     display: none !important;  
-}
-
-.description-container {
-    font-size: 0.8em;
-    flex-grow: 1;
-    overflow-y: scroll;
 }

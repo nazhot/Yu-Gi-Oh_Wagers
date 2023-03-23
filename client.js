@@ -129,7 +129,6 @@ function clearDeck() {
 function setDeckBreakdown(breakdown){
     for (const prop in breakdown){
         const lowerProp = "deck-" + prop.toLocaleLowerCase().replace(" ", "-");
-        console.log(lowerProp);
         setInfoPane(lowerProp, breakdown[prop]);
     }
 }
@@ -239,7 +238,6 @@ socket.on("insufficient-tokens", () => {
 });
 
 socket.on("token-update", (tokensRemaining) => {
-    console.log("updating token count");
     setTokenCount(tokensRemaining);
 });
 

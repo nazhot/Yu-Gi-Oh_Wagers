@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="general.css" type="text/css"/>
     <link rel="stylesheet" href="home-page.css" type="text/css"/>
     <link rel="stylesheet" href="wagering-page.css" type="text/css"/>
+    <link rel="stylesheet" href="playing-screen.css" type="text/css"/>
   </head>
   <body>
       <div id="game-setup-screen" class="screen-container">
@@ -21,7 +22,7 @@
         
         <div class="left-column">
           <div id="wagered-card-container" class="wager-element">
-            <p>Wagered   Card</p>
+            <p>Wagered Card</p>
             <img id="wagered-card" src="public/images/back.png">
             <p id="wagered-card-name"></p>
             <div class="description-container">
@@ -41,8 +42,8 @@
         <div id="hovered-card-container">
           <p>Hovered Card</p>
           <img id="hovered-card" src="public/images/back.png">
-          <p>Your Wager</p>
-          <p id="previous-wager"></p>
+          <span>Your Wager: </span><span id="previous-wager"></span>
+          <p></p>
           <p id="hovered-card-name"></p>
           <div class="description-container">
             <p id="hovered-card-desc"></p>
@@ -51,20 +52,20 @@
 
         <div id="bottom-nav-container">
           <div id="player-information-container">
-            <span>Tokens:</span><span id="player-token-count"></span>
+            <span>Tokens: </span><span id="player-token-count"></span>
             <p></p>
-            <span>Deck Size:</span><span id="player-deck-size"> </span>
+            <span>Deck Size: </span><span id="player-deck-size"> </span>
             <p></p>
-            <span>Cards Remaining:</span><span id="player-cards-remaining"></span>
+            <span>Cards Remaining: </span><span id="player-cards-remaining"></span>
           </div>
           <div id="deck-information-container">
-            <span>Effect Monsters:</span><span id="deck-effect-monsters">0</span>
+            <span>Effect Monsters: </span><span id="deck-effect-monsters">0</span>
             <p></p>
-            <span>Normal Monsters:</span><span id="deck-normal-monsters">0</span>
+            <span>Normal Monsters: </span><span id="deck-normal-monsters">0</span>
             <p></p>
-            <span>Traps:</span><span id="deck-traps">0</span>
+            <span>Traps: </span><span id="deck-traps">0</span>
             <p></p>
-            <span>Spells:</span><span id="deck-spells">0</span>
+            <span>Spells: </span><span id="deck-spells">0</span>
           </div>
           <button id="request-end" class="hidden" onclick="submitRequestEnd(this)">PLZ STOP</button>
           <div id="player-liquidation-options-container" class="liquidate-element submit-container hidden">
