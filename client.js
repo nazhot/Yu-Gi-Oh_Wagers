@@ -72,16 +72,27 @@ function submitLiquidate() {
 function hideAllElementsByClassName(className) {
     const elements = document.getElementsByClassName(className);
     for (const element of elements) {
-    element.classList.remove("hidden");
-    element.classList.add("hidden");
+        element.classList.remove("hidden");
+        element.classList.add("hidden");
     }
 }
 
 function showAllElementsByClassName(className) {
     const elements = document.getElementsByClassName(className);
     for (const element of elements) {
-    element.classList.remove("hidden");
+        element.classList.remove("hidden");
     }
+}
+
+function hideElementById(id){
+    const element = document.getElementById(id);
+    element.classList.remove("hidden");
+    element.classList.add("hidden");
+}
+
+function showElementById(id){
+    const element = document.getElementById(id);
+    element.classList.remove("hidden");
 }
 
 function resetEndButtonOpacity() {
@@ -285,11 +296,11 @@ socket.on("change-to-end-screen", () => {
 });
 
 socket.on("show-end-button", () => {
-    showAllElementsByClassName("request-end");
+    showElementById("request-end");
 });
 
 socket.on("hide-end-button", () => {
-    hideAllElementsByClassName("request-end");
+    hideElementById("request-end");
 });
 
 socket.on("download", (ydkFile) => {
