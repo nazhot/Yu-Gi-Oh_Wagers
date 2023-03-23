@@ -87,10 +87,8 @@ function showAllElementsByClassName(className) {
 }
 
 function resetEndButtonOpacity() {
-    const endButtons = document.getElementsByClassName("request-end");
-    for (const endButton of endButtons) {
+    const endButton = document.getElementById("request-end");
     endButton.style.opacity = "1.0";
-    }
 }
 
 function changeToScreen(screenName) {
@@ -117,11 +115,9 @@ function setRemainingCards(cardsRemaining) {
     setInfoPanes("player-cards-remaining", cardsRemaining);
 }
 
-function setInfoPanes(elementClass, value) {
-    const elements = document.getElementsByClassName(elementClass);
-    for (const element of elements) {
+function setInfoPanes(elementId, value) {
+    const element = document.getElementById(elementId);
     element.innerHTML = value;
-    }
 }
 
 function clearDeck() {
@@ -246,10 +242,7 @@ socket.on("non-number-wager", () => {
 });
 
 socket.on("start-game", () => {
-    const bottomNavs = document.getElementsByClassName("bottom-nav-container");
-    for (const bottomNav of bottomNavs){
-        bottomNav.classList.remove("hidden");
-    }
+    document.getElementById("bottom-nav-container").classList.remove("hidden");
 });
 
 socket.on("insufficient-tokens", () => {

@@ -61,18 +61,30 @@
           </div>
         </div>
       </div>
-      <div class="bottom-nav-container hidden">
-        <div class="player-information-container">
+      <div id="bottom-nav-container" class="hidden">
+        <div id="player-information-container">
           <span>Tokens:</span>
-          <span class="player-token-count"> </span>
+          <span id="player-token-count"> </span>
           <p></p>
           <span>Deck Size:</span>
-          <span class="player-deck-size"> </span>
+          <span id="player-deck-size"> </span>
           <p></p>
           <span>Cards Remaining:</span>
-          <span class="player-cards-remaining"></span>
+          <span id="player-cards-remaining"></span>
         </div>
-        <button class="request-end hidden" onclick="submitRequestEnd(this)">PLZ STOP</button>
+        <div id="deck-information-container">
+          <span>Effect Monsters:</span>
+          <span id="deck-effect-monsters"> </span>
+          <p></p>
+          <span>Normal Monsters:</span>
+          <span id="deck-normal-monsters"> </span>
+          <p></p>
+          <span>Traps:</span>
+          <span id="deck-traps"></span>
+          <span>Spells:</span>
+          <span id="deck-spells"></span>
+        </div>
+        <button id="request-end" class="hidden" onclick="submitRequestEnd(this)">PLZ STOP</button>
         <div id="player-liquidation-options-container" class="submit-container">
           <button id="liquidate-cards" onclick="submitLiquidate()">Liquidate Card(s)</button>
         </div>
