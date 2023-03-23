@@ -104,18 +104,18 @@ function changeToScreen(screenName) {
 }
 
 function setTokenCount(tokens) {
-    setInfoPanes("player-token-count", tokens);
+    setInfoPane("player-token-count", tokens);
 }
 
 function setDeckSize(deckSize) {
-    setInfoPanes("player-deck-size", deckSize);
+    setInfoPane("player-deck-size", deckSize);
 }
 
 function setRemainingCards(cardsRemaining) {
-    setInfoPanes("player-cards-remaining", cardsRemaining);
+    setInfoPane("player-cards-remaining", cardsRemaining);
 }
 
-function setInfoPanes(elementId, value) {
+function setInfoPane(elementId, value) {
     const element = document.getElementById(elementId);
     element.innerHTML = value;
 }
@@ -128,6 +128,14 @@ function clearDeck() {
     }
     }
     return deckElements;
+}
+
+function setDeckBreakdown(breakdown){
+    for (const prop in breakdown){
+        const lowerProp = "deck-" + prop.toLocaleLowerCase().replace(" ", "-");
+        console.log(lowerProp);
+        setInfoPane(lowerProp, breakdown[prop]);
+    }
 }
 
 function setWagerCard(cardObject) {
@@ -175,9 +183,9 @@ function generateCardElement(cardObject) {
             largeCardElement.src = card.largeImage;
         }
 
-        setInfoPanes("previous-wager", card.wager);
-        setInfoPanes("hovered-card-name", card.cardName);
-        setInfoPanes("hovered-card-desc", card.cardDesc);
+        setInfoPane("previous-wager", card.wager);
+        setInfoPane("hovered-card-name", card.cardName);
+        setInfoPane("hovered-card-desc", card.cardDesc);
     };
 
     card.onmouseleave = () => {
@@ -185,9 +193,9 @@ function generateCardElement(cardObject) {
         for (const largeCardElement of largeCardElements) {
             largeCardElement.src = cardBackImage;
         }
-        setInfoPanes("previous-wager", "");
-        setInfoPanes("hovered-card-name", "");
-        setInfoPanes("hovered-card-desc", "");
+        setInfoPane("previous-wager", "");
+        setInfoPane("hovered-card-name", "");
+        setInfoPane("hovered-card-desc", "");
     };
 
     card.onclick = () => {
@@ -226,10 +234,6 @@ function setDeck(cardList) {
             deckElement.appendChild(cardElement);
         }
     }
-}
-
-function setBreakdownPanes(breakdown){
-    
 }
 
 function submitStartGame() {
@@ -326,8 +330,10 @@ socket.on("is-player-1", () => {
 
 socket.on("card-added", (cardObject, breakdown) => {
     addCard(cardObject);
+    setDeckBreakdown(breakdown);
 });
 
 socket.on("deck", (cardList, breakdown) => {
     setDeck(cardList);
+    setDeckBreakdown(breakdown);
 });
