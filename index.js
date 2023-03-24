@@ -201,8 +201,7 @@ const data = {
         return returnData;
     },
 
-    getPlayerCardTypeBreakdown(player){
-        const cards = this.players[player].cards;
+    getCardTypeBreakdown(cards){
         const breakdown = {
             "Normal Monsters": 0,
             "Effect Monsters": 0,
@@ -415,7 +414,8 @@ function emitInvalidLiquidation(player, card){
 }
 
 function emitDeckBreakdown(player){
-    io.to(player).emit("deck-breakdown", data.getPlayerCardTypeBreakdown(player));
+    const cards = data.players[player].cards;
+    io.to(player).emit("deck-breakdown", data.getCardTypeBreakdown(cards));
 }
 
 /**
@@ -467,8 +467,9 @@ function emitDeck(player){
     for (const card of data.players[player].cards){
         deck.push(card);
     }
-    const breakdown = data.getPlayerCardTypeBreakdown(player);
-    console.log(breakdown);
+    const cards     = data.players[player].cards;
+    const breakdown = data.getCardTypeBreakdown(cards);
+
     io.to(player).emit("deck", deck, breakdown);
 }
 
@@ -477,7 +478,8 @@ function emitDeck(player){
  * @param {string} player socket.id of player
  */
 function emitCurrentCardAdded(player){
-    const breakdown = data.getPlayerCardTypeBreakdown(player);
+    const cards     = data.players[player].cards;
+    const breakdown = data.getCardTypeBreakdown(cards);
     io.to(player).emit("card-added", {...data.currentCard, wager: data.currentWagers[player]}, breakdown);
 }
 
@@ -853,7 +855,7 @@ io.on("connection", (socket) => {
     });
 
     /**
-     * Let player updated whether they're ready or not
+     * Let player update whether they're ready or not
      */
     socket.on("update-readied-status", (status) => {
         data.setPlayerStatus(socket.id, "readied", status);
