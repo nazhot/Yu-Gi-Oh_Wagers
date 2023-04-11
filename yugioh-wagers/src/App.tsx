@@ -25,7 +25,7 @@ function App() {
           isLarge={false}
           name="Nimble Momonga"
           id="22567609"
-          desc="test description"
+          desc=""
         />
       </div>
       <div className = "main-content">

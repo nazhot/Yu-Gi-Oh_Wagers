@@ -12,7 +12,7 @@ export default function Card({name, id, desc, isLarge}: CardObject){
     return (
         <>
         <img src={url} className={className}/>
-        <p className="card-description">{desc}</p>
+        {desc.length > 0 && <p className="card-description">{desc}</p>}
         </>
     );
 }
