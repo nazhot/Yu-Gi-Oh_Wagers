@@ -1,14 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import InformationPane from './components/InformationPane';
+import { Pane } from './components/InformationPane';
+import './App.css';
 
 function App() {
   const [count, setCount] = useState(0)
-
+  const testPane: Pane = {
+    name: "Test",
+    id: "id-test",
+    count: 24,
+  }
   return (
     <div className="App">
       <div className="left-column">
+        <InformationPane 
+          name="Test"
+          id="id-test"
+          count={25}
+        />
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
