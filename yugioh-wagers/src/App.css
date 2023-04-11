@@ -1,0 +1,34 @@
+#root{
+  width: 100vw;
+  height: 100vh;
+}
+
+.App {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-areas: 'left-column main-content right-column'
+                       'bottom-nav bottom-nav bottom-nav';
+  grid-template-columns: 1fr 4.5fr 1fr;
+  grid-template-rows: 8fr 1fr;
+}
+
+.left-column{
+  grid-area: left-column;
+  background-color: red;
+}
+
+.main-content{
+  grid-area: main-content;
+  background-color: blue;
+}
+
+.right-column{
+  grid-area: right-column;
+  background-color: pink;
+}
+
+.bottom-nav{
+  grid-area: bottom-nav;
+  background-color: blueviolet;
+}
