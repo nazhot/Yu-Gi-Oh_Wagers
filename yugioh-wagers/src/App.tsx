@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg';
 import InformationPane from './components/InformationPane';
 import { Pane } from './components/InformationPane';
 import './App.css';
+import Card from './components/Card';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -20,12 +21,12 @@ function App() {
           id="id-test"
           count={25}
         />
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Card
+          isLarge={false}
+          name="Nimble Momonga"
+          id="22567609"
+          desc="test description"
+        />
       </div>
       <div className = "main-content">
         <p>Main Content</p>
