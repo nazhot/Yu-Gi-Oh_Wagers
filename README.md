@@ -19,6 +19,8 @@
 A new take on Yu-Gi-Oh deck building, going head to head with opponents, blind wagering on cards to add to your deck.
 Live version available at: https://noahzydel.com/wager/
 
+<img src="./.github/resources/wager-submit.png">
+
 ## 📖 Overview
 A tool focused on adding another layer to deck building within the Yu-Gi-Oh card game. The idea came from the card game GOPS (https://playingcarddecks.com/blogs/how-to-play/gops-game-rules). A card list, following the same format as cube format lists, is chosen, and a total number of tokens is decided by the host.
 
