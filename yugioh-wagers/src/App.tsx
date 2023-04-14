@@ -11,7 +11,7 @@ function App() {
   const testPane: Pane = {
     name: "Test",
     id: "id-test",
-    count: 24,
+    count: 24,  
   }
   return (
     <div className="App">
