@@ -16,7 +16,7 @@
 #deck-container {
     overflow-y: scroll;
     grid-area: main-content;
-    border: 1px solid red;
+    border: 1px solid black;
     font-size: 0;
 }
 
@@ -25,7 +25,7 @@
     grid-template-areas: 'player-info deck-info . request-end submit';
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-area: bottom-nav;
-    border: 1px solid blue;
+    border: 1px solid black;
 }
 
 #hovered-card-container {
