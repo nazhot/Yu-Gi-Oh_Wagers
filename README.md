@@ -22,11 +22,13 @@ Live version available at: https://noahzydel.com/wager/
 <img src="./.github/resources/wager-submit.png">
 
 ## 📖 Overview
-A tool focused on adding another layer to deck building within the Yu-Gi-Oh card game. The idea came from the card game GOPS (https://playingcarddecks.com/blogs/how-to-play/gops-game-rules). A card list, following the same format as cube format lists, is chosen, and a total number of tokens is decided by the host.
+A game focused on adding another layer to deck building within the Yu-Gi-Oh card game. The idea came from the card game GOPS (https://playingcarddecks.com/blogs/how-to-play/gops-game-rules). A card list, following the same format as cube format lists, is chosen, and a total number of tokens is decided by the host.
 
-The game starts with a card being chosen from the list, and shown to all players. Every player gets a chance to wager some of their remaining tokens on the card, and the card goes to the highest wager (a winner is chosen in the case of a tie), and everyone's wagers are subtracted from their tokens. Players are moved to a liquidating screen, where they are shown their deck, and have the option to click and remove card(s) from it in order to be given back the lowest wager that was put on that card. Gameplay repeats until either all cards are gone, or players have at least 40 cards each and all agree to end. 
+The game starts with a card being chosen from the list, and shown to all players. Every player gets a chance to wager some of their remaining tokens on the card, and the card goes to the highest wager (a winner is chosen in the case of a tie), and everyone's wagers are subtracted from their tokens (regardless of if they won the card or not). Players are moved to a liquidating screen (shown below), where they are shown their deck, and have the option to click and remove card(s) from it in order to be given back the lowest wager that was put on that card. Gameplay repeats until either all cards are gone, or players have at least 40 cards each and all agree to end. 
 
-After gameplay is completed, players can download a .ydk file of their deck to import into the dueling software of their choice.
+<img src="./.github/resources/wager-liquidate.png">
+
+When all players have at least 40 cards in their deck, a button will be displayed to each to end the game. When every player clicks it, the game is finished. After gameplay is completed, players can download a .ydk file of their deck to import into the dueling software of their choice.
 
 ## ⭐️ Current Version
 v0.0.1
@@ -35,9 +37,11 @@ v0.0.1
 - Information displayed to players:
   - Their token count
   - Their deck size
+  - Their deck breakdown (normal/effect monsters, traps, spells)
   - Total number of cards remaining in the list
   - Name & description of wager card
   - Name & description of card in player's deck being hovered over
+  - Wager that the player payed for the hovered card
 - Clicking a card gives it a red border, toggling its selection for liquidation
 - Finishing a game lets the player download the .ydk for their deck
 
@@ -56,6 +60,10 @@ N/A
   - Every player chooses a list, and it's a roulette
 - Show players the breakdown of their deck: number of spell/trap/monster cards
 - Show breakdown of remaining cards: number of spell/trap/monster cards
+- Allow for different game mechanic changes:
+  - Tokens only being taken from the winning player
+  - Receiving an average of wagers rather than just the lowest value
+  - Extra cards for ending the game with tokens remaining 
 
 ## 🪚 Built With
 - node.js
