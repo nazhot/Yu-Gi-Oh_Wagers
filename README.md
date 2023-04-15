@@ -12,7 +12,6 @@
 - [🔜 Hopeful Features](#-hopeful-features)
 - [🪚 Built With](#-built-with)
 - [🔨 Build Instructions](#-build-instructions)
-- [🔄 Adding Recurring Events](#-adding-recurring-events)
 
 
 # Yu-Gi-Oh Wager Game
