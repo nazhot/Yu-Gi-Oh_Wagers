@@ -6,6 +6,7 @@ import { Pane } from './components/InformationPane';
 import './App.css';
 import Card from './components/Card';
 import Button from './Button';
+import WagerInput from './WagerInput';
 
 function App() {
   const [screen, setScreen] = useState("Wager");
@@ -51,6 +52,7 @@ function App() {
       </div>
       <div className="bottom-nav">
         <p>Bottom Nav</p>
+        <WagerInput/>
       </div>
     </div>
   )
