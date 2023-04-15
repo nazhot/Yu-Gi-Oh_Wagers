@@ -5,8 +5,9 @@ import InformationPane from './components/InformationPane';
 import { Pane } from './components/InformationPane';
 import './App.css';
 import Card from './components/Card';
-import Button from './Button';
-import WagerInput from './WagerInput';
+import Button from './components/Button';
+import WagerInput from './components/WagerInput';
+import WagerForm from './components/WagerForm';
 
 function App() {
   const [screen, setScreen] = useState("Wager");
@@ -52,7 +53,7 @@ function App() {
       </div>
       <div className="bottom-nav">
         <p>Bottom Nav</p>
-        <WagerInput/>
+        <WagerForm/>
       </div>
     </div>
   )
