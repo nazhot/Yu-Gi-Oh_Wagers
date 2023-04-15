@@ -5,17 +5,29 @@ import InformationPane from './components/InformationPane';
 import { Pane } from './components/InformationPane';
 import './App.css';
 import Card from './components/Card';
+import Button from './Button';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [screen, setScreen] = useState("Wager");
+
   const testPane: Pane = {
     name: "Test",
     id: "id-test",
     count: 24,  
   }
+
+  function changeScreen(){
+    if (screen == "Wager"){
+      setScreen("Liquidate");
+    } else {
+      setScreen("Wager");
+    }
+  }
+
   return (
     <div className="App">
       <div className="left-column">
+        <p>{screen}</p>
         <InformationPane 
           name="Test"
           id="id-test"
@@ -27,17 +39,15 @@ function App() {
           id="22567609"
           desc=""
         />
+        <Button onClick={changeScreen}>
+          Test
+        </Button>
+        
       </div>
       <div className = "main-content">
         <p>Main Content</p>
       </div>
       <div className="card right-column">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
       <div className="bottom-nav">
         <p>Bottom Nav</p>
