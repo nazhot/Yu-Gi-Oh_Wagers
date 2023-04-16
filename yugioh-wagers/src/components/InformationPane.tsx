@@ -7,7 +7,7 @@ export type Pane = {
 export default function InformationPane({name, count, id}: Pane){
     return (
         <>
-        <span>{name}</span> <span id={id}>{count}</span>
+        <span>{name}</span>: <span id={id}>{count}</span>
         </>
     );
 }

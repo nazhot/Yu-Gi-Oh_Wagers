@@ -8,6 +8,7 @@ import Card from './components/Card';
 import Button from './components/Button';
 import WagerInput from './components/WagerInput';
 import WagerForm from './components/WagerForm';
+import NavBar from './components/NavBar';
 
 function App() {
   const [screen, setScreen] = useState("Wager");
@@ -51,10 +52,7 @@ function App() {
       </div>
       <div className="card right-column">
       </div>
-      <div className="bottom-nav">
-        <p>Bottom Nav</p>
-        <WagerForm/>
-      </div>
+      <NavBar></NavBar>
     </div>
   )
 }
