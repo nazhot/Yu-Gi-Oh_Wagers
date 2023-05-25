@@ -1,7 +1,7 @@
 const socket = io(); //comment out for server
 //const socket = io("https://noahzydel.com", {path: "/wagersocket/"});
 
-const cardBackImage = "public/images/back.png";
+const cardBackImage     = "public/images/back.png";
 const smallCardImageUrl = "https://images.ygoprodeck.com/images/cards_small/";
 const largeCardImageUrl = "https://images.ygoprodeck.com/images/cards/";
 

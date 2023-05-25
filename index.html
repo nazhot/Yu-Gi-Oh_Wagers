@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="home-page.css" type="text/css"/>
     <link rel="stylesheet" href="wagering-page.css" type="text/css"/>
     <link rel="stylesheet" href="playing-screen.css" type="text/css"/>
+    <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
+    <script src="client.js" defer></script>
   </head>
   <body>
       <div id="game-setup-screen" class="screen-container">
@@ -82,8 +84,5 @@
       <div id="end-screen" class="screen-container hidden">
         <button id="download-deck" onclick="submitDownload()">Download</button>
       </div>
-
-      <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
-      <script src="client.js" defer></script>
   </body>
 </html>
